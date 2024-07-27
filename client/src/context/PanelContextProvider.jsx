@@ -13,6 +13,7 @@ function PanelContextProvider({ children }) {
     droppableColor: "#17c5e2",
   });
   const [spaceLeft, setSpaceLeft] = useState(panelSpecs.panelSize);
+  const [panelCollectionContext, setPanelCollectionContext] = useState(null);
 
   useEffect(() => {
     if (panelSpecs.panelSize) {
@@ -21,7 +22,14 @@ function PanelContextProvider({ children }) {
   }, [panelSpecs.panelSize]);
   return (
     <PanelContext.Provider
-      value={{ panelSpecs, setPanelSpecs, spaceLeft, setSpaceLeft }}
+      value={{
+        panelSpecs,
+        setPanelSpecs,
+        spaceLeft,
+        setSpaceLeft,
+        panelCollectionContext,
+        setPanelCollectionContext,
+      }}
     >
       {children}
     </PanelContext.Provider>

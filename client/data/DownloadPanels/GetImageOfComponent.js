@@ -9,6 +9,7 @@ const getImageOfComponent = (ref, panelName) => {
         imageLink.href = imageData;
         imageLink.download = `${panelName}.png`;
         imageLink.click();
+        return imageData;
       })
       .catch((error) => {
         console.log(error);

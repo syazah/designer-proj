@@ -1,9 +1,16 @@
 import { Link } from "react-router-dom";
 import Panel from "../PanelComponents/Panel";
-import { useContext, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { UserAuthContext } from "../../context/UserAuthProvider";
 import getImageOfComponent from "../../../data/DownloadPanels/GetImageOfComponent";
+import getPdfOfComponent from "../../../data/DownloadPanels/GetPdfOfComponent";
+import { PanelContext } from "../../context/PanelContextProvider";
 function CollectionPanels({ panels, setAddPanelPopup }) {
+  const collectionRef = useRef(null);
+  const { setPanelCollectionContext } = useContext(PanelContext);
+  useEffect(() => {
+    setPanelCollectionContext(collectionRef);
+  }, [collectionRef, setPanelCollectionContext]);
   return (
     <div className="w-full min-h-[200px] flex flex-col justify-start overflow-hidden">
       {/* ADD PANEL BUTTON  */}
@@ -40,7 +47,7 @@ function CollectionPanels({ panels, setAddPanelPopup }) {
           *No Panels To Show Kindly Refresh Or Add A New Panel{" "}
         </h1>
       ) : (
-        <div className="w-full mt-8 flex flex-col gap-4">
+        <div ref={collectionRef} className="w-full mt-8 flex flex-col gap-4">
           {panels?.map((panel, index) => {
             return <AvailablePanel key={index} panel={panel} />;
           })}
@@ -53,7 +60,19 @@ function CollectionPanels({ panels, setAddPanelPopup }) {
 function AvailablePanel({ panel }) {
   const { user } = useContext(UserAuthContext);
   const panelRef = useRef(null);
-
+  const downloadOptionRef = useRef(null);
+  const [downloadOptionShowing, setDownloadOptionShowing] = useState(false);
+  function getDownloadOption() {
+    if (!downloadOptionShowing) {
+      downloadOptionRef.current.style.transform = "translateY(0px)";
+      downloadOptionRef.current.style.opacity = 1;
+      setDownloadOptionShowing(true);
+    } else {
+      downloadOptionRef.current.style.transform = "translateY(1000px)";
+      downloadOptionRef.current.style.opacity = 0;
+      setDownloadOptionShowing(false);
+    }
+  }
   // DELETE PANEL
   async function DeletePanel() {
     try {
@@ -72,11 +91,11 @@ function AvailablePanel({ panel }) {
     }
   }
   return (
-    <div className="bg-zinc-950 rounded-xl flex flex-col overflow-hidden">
+    <div className="bg-zinc-950 rounded-xl flex flex-col overflow-hidden relative">
       <div
         ref={panelRef}
         style={{ backgroundColor: panel.panelData?.panelWall ?? "#000" }}
-        className="flex justify-center items-center w-full h-[400px]"
+        className="available-panel flex justify-center items-center w-full h-[400px]"
       >
         {panel?.panelData != null && (
           <Panel
@@ -96,7 +115,7 @@ function AvailablePanel({ panel }) {
           {/* DOWNLOAD PANEL  */}
           <div
             className="flex justify-center items-center bg-white rounded-full p-2 cursor-pointer hover:bg-gray-400"
-            onClick={() => getImageOfComponent(panelRef, panel.panelName)}
+            onClick={getDownloadOption}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -138,23 +157,80 @@ function AvailablePanel({ panel }) {
           {/* GO TO PANEL  */}
           <Link
             to={`/panel/${panel._id}`}
-            className="flex justify-center items-center p-2 bg-red-600 rounded-full"
+            className="flex justify-center items-center p-2 bg-red-600 rounded-full hover:bg-red-800"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth={1.5}
-              stroke="currentColor"
+              stroke="white"
               className="size-8"
             >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
               />
             </svg>
           </Link>
+        </div>
+      </div>
+
+      {/* PANEL DOWNLOAD INFO  */}
+      <div
+        ref={downloadOptionRef}
+        className="absolute w-48 p-2 bg-white bottom-5 z-20 right-48 rounded-xl translate-y-[1000px] transition-all duration-500 ease-in-out"
+      >
+        {/* PDF  */}
+        <div
+          onClick={() => {
+            getPdfOfComponent(panelRef, panel.panelName);
+          }}
+          className="flex justify-start items-center gap-1 cursor-pointer group"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+            />
+          </svg>
+
+          <h2 className="text-black font-semibold group-hover:text-gray-700">
+            Download PDF
+          </h2>
+        </div>
+
+        {/* PNG  */}
+        <div
+          onClick={() => getImageOfComponent(panelRef, panel.panelName)}
+          className="flex justify-start items-center gap-1 cursor-pointer group"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-6"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+            />
+          </svg>
+          <h2 className="text-black font-semibold group-hover:text-gray-700">
+            Download PNG
+          </h2>
         </div>
       </div>
     </div>
