@@ -1,6 +1,7 @@
 import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { UserAuthContext } from "../context/UserAuthProvider";
+import DialogBox from "../components/DialogBox";
 
 function HomePage() {
   const { user, userType } = useContext(UserAuthContext);
@@ -24,7 +25,7 @@ function HomePage() {
     }
   }
   return (
-    <div className="w-full h-[100vh] bg-zinc-800 flex flex-col">
+    <div className="w-full h-[100vh] bg-zinc-800 flex flex-col relative">
       {/* NAVBAR  */}
       <div className="w-full flex justify-between items-center p-2 shadow-xl">
         <div>
@@ -78,6 +79,10 @@ function HomePage() {
           )}
         </div>
       </div>
+
+      {/* DIALOG BOX COMPONENT  */}
+      <DialogBox />
+
       {/* Text Content */}
       <NegativeAuthContent user={user} userType={userType} />
     </div>
@@ -133,7 +138,10 @@ function NegativeAuthContent({ user, userType }) {
             </Link>
           ) : userType === 6 ? (
             <>
-              <Link className="bg-red-600 p-4 rounded-full font-semibold text-white text-lg flex justify-center items-center hover:bg-red-800 transition-all duration-300">
+              <Link
+                to={"/normal-panels"}
+                className="bg-red-600 p-4 rounded-full font-semibold text-white text-lg flex justify-center items-center hover:bg-red-800 transition-all duration-300"
+              >
                 Normal Panels
               </Link>
               <Link

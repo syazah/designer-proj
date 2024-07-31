@@ -2,6 +2,8 @@ import errorHandler from "../utils/errorHandler.js";
 import validator from "validator";
 import PasswordValidator from "password-validator";
 import { Admin } from "../models/Admin.js";
+import { User } from "../models/User.js";
+import { Business } from "../models/Business.js";
 import bcryptjs from "bcryptjs";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
@@ -101,5 +103,112 @@ export const AdminSendDetailsController = async (req, res, next) => {
     res.status(200).json({ success: true });
   } catch (error) {
     next(errorHandler(500, "Internal Server Error"));
+  }
+};
+
+//GET ALL USERS
+export const GetAllUsersController = async (req, res, next) => {
+  try {
+    const { limit, page } = req.query;
+    const dataLimit = parseInt(limit) || 10;
+    const skipPage = parseInt(page) || 0;
+    const innumDoc = await User.countDocuments();
+    const numDoc = innumDoc / 10 + (innumDoc % 10) > 0 ? 1 : 0;
+    const user = await User.find({})
+      .skip(skipPage * dataLimit)
+      .limit(dataLimit);
+    res.status(200).json({ success: true, user, numDoc });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+//GET ALL BUSINESSES
+export const GetAllBusinessesController = async (req, res, next) => {
+  try {
+    const { limit, page } = req.query;
+    const dataLimit = parseInt(limit) || 10;
+    const skipPage = parseInt(page) || 0;
+    const innumDoc = await Business.countDocuments();
+    const numDoc = innumDoc / 10 + (innumDoc % 10) > 0 ? 1 : 0;
+    const user = await Business.find({})
+      .skip(skipPage * dataLimit)
+      .limit(dataLimit);
+    res.status(200).json({ success: true, user, numDoc });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+// DELETE USER CONTROLLER
+export const DeleteUserController = async (req, res, next) => {
+  try {
+    const { id } = req.body;
+    if (!id) {
+      return next(errorHandler(400, "Some Internal Error"));
+    }
+    await User.findOneAndDelete({ _id: id });
+    res.status(200).json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//GET USER DETAIL CONTROLLER
+export const GetUserDetailController = async (req, res, next) => {
+  try {
+    const { id } = req.body;
+    if (!id) {
+      return next(errorHandler(400, "User Details Not Found"));
+    }
+    const data = await User.findOne({ _id: id })
+      .populate({ path: "createdBy" })
+      .populate({ path: "collectionsCreated", populate: { path: "panels" } });
+
+    if (!data) {
+      return next(errorHandler(400, "User Details Not Found"));
+    }
+    res.status(200).json({ success: true, data });
+  } catch (error) {
+    next(errorHandler(error));
+  }
+};
+
+//GET SEARCHED USER
+export const SearchUserController = async (req, res, next) => {
+  try {
+    const { query } = req.query;
+    if (!query) {
+      return next(errorHandler(400, "Some Error Occurred"));
+    }
+    const regex = new RegExp(query, "i");
+    const searchCriteria = {
+      $or: [{ name: { $regex: regex } }, { username: { $regex: regex } }],
+    };
+
+    const user = await User.find(searchCriteria);
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    next(error);
+  }
+};
+//GET SEARCHED Business
+export const SearchBusinessController = async (req, res, next) => {
+  try {
+    const { query } = req.query;
+    if (!query) {
+      return next(errorHandler(400, "Some Error Occurred"));
+    }
+    const regex = new RegExp(query, "i");
+    const searchCriteria = {
+      $or: [{ name: { $regex: regex } }, { username: { $regex: regex } }],
+    };
+
+    const user = await Business.find(searchCriteria);
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    next(error);
   }
 };

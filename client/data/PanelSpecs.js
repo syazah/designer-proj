@@ -1,4 +1,4 @@
-export const PanelSize = [2, 4, 6, 8];
+export const PanelSize = [2, 4, 6, 8, 12];
 export const PanelVariant = [
   [
     {
@@ -99,7 +99,7 @@ export const PanelVariant = [
       cost: 6,
       variant: {
         switches: 6,
-        dimmmers: 1,
+        dimmers: 1,
       },
     },
     {
@@ -117,8 +117,18 @@ export const PanelVariant = [
     },
   ],
   [],
+  [],
 ];
-export const PanelExtensions = [];
+export const PanelExtensions = [
+  [
+    {
+      cost: 2,
+      variant: {
+        plugs: 1,
+      },
+    },
+  ],
+];
 export const PanelGlass = ["#000", "#36454F", "#ab936b"];
 export const PanelFrame = ["#000", "#36454F", "#eee", "#ab936b"];
 export const PanelIcons = [

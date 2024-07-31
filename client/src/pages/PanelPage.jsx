@@ -5,6 +5,7 @@ import Sidebar from "../components/PanelComponents/Sidebar";
 import SidebarTool from "../components/PanelComponents/SidebarTool";
 import { PanelContext } from "../context/PanelContextProvider";
 import Panel from "../components/PanelComponents/Panel";
+import BigPanel from "../components/PanelComponents/BigPanel";
 function PanelPage() {
   const { user } = useContext(UserAuthContext);
   const { id } = useParams();
@@ -44,7 +45,7 @@ function PanelPage() {
       updatePanel = setTimeout(() => {
         UpdatePanelData();
         setPanelUpdating(false);
-      }, 5000);
+      }, 3000);
     }
     return () => clearTimeout(updatePanel);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -292,14 +293,23 @@ function PanelPage() {
               }
               className={`flex justify-center items-center h-full`}
             >
-              <Panel
-                panelSize={panelSpecs.panelSize}
-                panelGlass={panelSpecs.panelGlass}
-                panelFrame={panelSpecs.panelFrame}
-                panelVariant={panelSpecs.panelVariant}
-              />
+              {panelSpecs.panelSize === 12 ? (
+                <BigPanel
+                  panelGlass={panelSpecs.panelGlass}
+                  panelFrame={panelSpecs.panelFrame}
+                  panelVariant={panelSpecs.bigPanelVariant}
+                />
+              ) : (
+                <Panel
+                  panelSize={panelSpecs.panelSize}
+                  panelGlass={panelSpecs.panelGlass}
+                  panelFrame={panelSpecs.panelFrame}
+                  panelVariant={panelSpecs.panelVariant}
+                />
+              )}
             </div>
           </div>
+
           <Sidebar
             setSidebarToolShows={setSidebarToolShows}
             setSidebarOpen={setSidebarOpen}

@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import {
+  PanelExtensions,
   PanelFrame,
   PanelGlass,
   PanelIcons,
@@ -11,8 +12,14 @@ import { PanelContext } from "../../context/PanelContextProvider";
 import Draggable from "./Draggable";
 
 function SidebarTool({ sidebarToolShows, setCantAddMore }) {
-  const { panelSpecs, setPanelSpecs, spaceLeft, setSpaceLeft } =
-    useContext(PanelContext);
+  const {
+    panelSpecs,
+    setPanelSpecs,
+    spaceLeft,
+    setSpaceLeft,
+    upSpace,
+    setUpSpace,
+  } = useContext(PanelContext);
   return (
     <div className="bg-zinc-950 h-full w-[15%] border-l-[1px] border-zinc-900 overflow-y-scroll">
       {/* SIZE  */}
@@ -32,6 +39,7 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
       {sidebarToolShows === "variant" &&
         PanelVariant.map((variant, index) => {
           if (index > panelSpecs.panelSize / 2 - 1) return null;
+          if (panelSpecs.panelSize === 12 && index > 2) return null;
           return (
             <div key={index}>
               <div className="flex justify-center items-center bg-red-600 p-2">
@@ -45,6 +53,33 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
                     onClick={() => {
                       if (spaceLeft === 0 || spaceLeft - variants.cost < 0) {
                         return setCantAddMore(true);
+                      }
+                      if (panelSpecs.panelSize >= 12) {
+                        let newPanelVariant;
+                        if (upSpace - variants.cost >= 0) {
+                          newPanelVariant = [
+                            [
+                              ...panelSpecs.bigPanelVariant[0],
+                              { ...variants.variant },
+                            ],
+                            [...panelSpecs.bigPanelVariant[1]],
+                          ];
+                          setUpSpace(upSpace - variants.cost);
+                        } else {
+                          newPanelVariant = [
+                            [...panelSpecs.bigPanelVariant[0]],
+                            [
+                              ...panelSpecs.bigPanelVariant[1],
+                              { ...variants.variant },
+                            ],
+                          ];
+                        }
+                        const newPanelSpecs = {
+                          ...panelSpecs,
+                          bigPanelVariant: newPanelVariant,
+                        };
+                        setPanelSpecs(newPanelSpecs);
+                        return setSpaceLeft(spaceLeft - variants.cost);
                       } else {
                         const newPanelVariant = [
                           ...panelSpecs.panelVariant,
@@ -90,6 +125,63 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
             </div>
           );
         })}
+
+      {/* EXTENSION  */}
+      {sidebarToolShows === "extension" &&
+        PanelExtensions.map((variant, index) => {
+          return (
+            <div key={index}>
+              {variant.map((variants, i) => {
+                return (
+                  <div
+                    key={i}
+                    className="border-b-2 border-zinc-800 hover:bg-red-600 p-2 cursor-pointer"
+                    onClick={() => {
+                      const extCount = panelSpecs.panelVariant.reduce(
+                        (count, curr) => {
+                          return curr === "ext" ? count + 1 : count;
+                        },
+                        0
+                      );
+
+                      if (
+                        (panelSpecs.panelSize === 6 && extCount >= 2) ||
+                        (panelSpecs.panelSize === 12 && extCount >= 2) ||
+                        (panelSpecs.panelSize !== 6 &&
+                          panelSpecs.panelSize !== 12 &&
+                          extCount >= 1)
+                      ) {
+                        return alert("More Extensions Cannot Be Added");
+                      }
+                      if (spaceLeft === 0 || spaceLeft - variants.cost < 0) {
+                        return setCantAddMore(true);
+                      } else {
+                        const newPanelVariant = [
+                          ...panelSpecs.panelVariant,
+                          { ...variants.variant },
+                          "ext",
+                        ];
+                        const newPanelSpecs = {
+                          ...panelSpecs,
+                          panelVariant: newPanelVariant,
+                        };
+                        setPanelSpecs(newPanelSpecs);
+                        return setSpaceLeft(spaceLeft - variants.cost);
+                      }
+                    }}
+                  >
+                    {variants.variant.plugs > 0 && (
+                      <h2 className="text-white">
+                        {variants.variant.plugs} Plugs{" "}
+                      </h2>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+
       {/* GLASS  */}
       {sidebarToolShows === "glass" &&
         PanelGlass.map((glass, index) => {

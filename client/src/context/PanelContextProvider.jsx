@@ -5,6 +5,7 @@ function PanelContextProvider({ children }) {
   const [panelSpecs, setPanelSpecs] = useState({
     panelSize: 2,
     panelVariant: [],
+    bigPanelVariant: [[], []],
     panelIcons: {},
     panelGlass: "#000",
     panelFrame: "#ddd",
@@ -14,6 +15,8 @@ function PanelContextProvider({ children }) {
   });
   const [spaceLeft, setSpaceLeft] = useState(panelSpecs.panelSize);
   const [panelCollectionContext, setPanelCollectionContext] = useState(null);
+  const [initialSignIn, setInitialSignIn] = useState(false);
+  const [upSpace, setUpSpace] = useState(6);
 
   useEffect(() => {
     if (panelSpecs.panelSize) {
@@ -29,6 +32,10 @@ function PanelContextProvider({ children }) {
         setSpaceLeft,
         panelCollectionContext,
         setPanelCollectionContext,
+        initialSignIn,
+        setInitialSignIn,
+        upSpace,
+        setUpSpace,
       }}
     >
       {children}

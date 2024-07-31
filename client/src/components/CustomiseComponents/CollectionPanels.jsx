@@ -5,6 +5,7 @@ import { UserAuthContext } from "../../context/UserAuthProvider";
 import getImageOfComponent from "../../../data/DownloadPanels/GetImageOfComponent";
 import getPdfOfComponent from "../../../data/DownloadPanels/GetPdfOfComponent";
 import { PanelContext } from "../../context/PanelContextProvider";
+import BigPanel from "../PanelComponents/BigPanel";
 function CollectionPanels({ panels, setAddPanelPopup }) {
   const collectionRef = useRef(null);
   const { setPanelCollectionContext } = useContext(PanelContext);
@@ -90,19 +91,29 @@ function AvailablePanel({ panel }) {
       alert("Error");
     }
   }
+  console.log(panel.panelData);
   return (
     <div className="bg-zinc-950 rounded-xl flex flex-col overflow-hidden relative">
       <div
         ref={panelRef}
         style={{ backgroundColor: panel.panelData?.panelWall ?? "#000" }}
-        className="available-panel flex justify-center items-center w-full h-[400px]"
+        className={`available-panel flex justify-center items-center w-full ${
+          panel.panelData.panelSize < 12 ? "h-[400px]" : "h-[500px]"
+        }`}
       >
-        {panel?.panelData != null && (
+        {panel?.panelData != null && panel?.panelData.panelSize < 12 ? (
           <Panel
             panelSize={panel.panelData.panelSize}
             panelGlass={panel.panelData.panelGlass}
             panelFrame={panel.panelData.panelFrame}
             panelVariant={panel.panelData.panelVariant}
+            panelIcons={Object.entries(panel.panelData?.panelIcons || {})}
+          />
+        ) : (
+          <BigPanel
+            panelGlass={panel.panelData.panelGlass}
+            panelFrame={panel.panelData.panelFrame}
+            panelVariant={panel.panelData.bigPanelVariant}
             panelIcons={Object.entries(panel.panelData?.panelIcons || {})}
           />
         )}

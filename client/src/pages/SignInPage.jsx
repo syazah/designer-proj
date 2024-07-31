@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { UserAuthContext } from "../context/UserAuthProvider";
 import { useNavigate } from "react-router-dom";
+import { PanelContext } from "../context/PanelContextProvider";
 
 function SignInPage() {
   const [signInOption, setSignInOption] = useState("");
@@ -98,6 +99,7 @@ function BusinessLogin({
 }) {
   const { setUser } = useContext(UserAuthContext);
   const navigate = useNavigate();
+  const { setInitialSignIn } = useContext(PanelContext);
   function handleFormData(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   }
@@ -119,6 +121,7 @@ function BusinessLogin({
       }
       if (res.ok && data.success === true) {
         setUser(data.userData);
+        setInitialSignIn(true);
         return navigate("/");
       }
       setLoading(false);
@@ -212,6 +215,7 @@ function ClientLogin({
 }) {
   const { setUser } = useContext(UserAuthContext);
   const navigate = useNavigate();
+  const { setInitialSignIn } = useContext(PanelContext);
   //HANDLE FORM DATA
   function handleFormData(e) {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -234,6 +238,7 @@ function ClientLogin({
       }
       if (res.ok && data.success === true) {
         setUser(data.userData);
+        setInitialSignIn(true);
         return navigate("/");
       }
       setLoading(false);
