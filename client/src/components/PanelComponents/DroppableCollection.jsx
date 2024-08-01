@@ -1,6 +1,6 @@
 import Droppables from "./Droppables";
 
-function DroppableCollection({ id, iconData = [] }) {
+function DroppableCollection({ id, iconData = [], normalPanel }) {
   const firstIcons = iconData.filter((item) =>
     item[0].startsWith(`${id}-first`)
   );
@@ -9,8 +9,16 @@ function DroppableCollection({ id, iconData = [] }) {
   );
   return (
     <div className="w-[64px] h-full flex flex-col justify-center gap-[45px]">
-      <Droppables dropId={`${id}-first`} iconData={firstIcons} />
-      <Droppables dropId={`${id}-second`} iconData={secondIcons} />
+      <Droppables
+        dropId={`${id}-first`}
+        iconData={firstIcons}
+        normalPanel={normalPanel}
+      />
+      <Droppables
+        dropId={`${id}-second`}
+        iconData={secondIcons}
+        normalPanel={normalPanel}
+      />
     </div>
   );
 }

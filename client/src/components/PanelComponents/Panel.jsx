@@ -10,6 +10,7 @@ function Panel({
   panelGlass,
   panelFrame,
   panelVariant,
+  normalPanelRegSize = false,
   panelIcons = [],
 }) {
   const { spaceLeft } = useContext(PanelContext);
@@ -39,7 +40,7 @@ function Panel({
         borderColor: panelFrame,
       }}
       className={`bg-black border-[8px] ${
-        normalPanel ? "scale-50" : ""
+        normalPanel ? (normalPanelRegSize ? "" : "scale-50") : ""
       } transition-all duration-200 rounded-lg shadow-2xl flex justify-center gap-[30px] relative`}
     >
       {panelVariant.length === 0 ? (
@@ -76,14 +77,25 @@ function Panel({
                     </div>
                   ) : (
                     <div className="flex gap-[20px]">
-                      {Array.from({ length: variant.switches / 2 }, (_, i) => {
-                        return (
-                          <DroppableCollection
-                            key={`${indexs}-${i}`}
-                            id={`${indexs}-${i}`}
-                          />
-                        );
-                      })}
+                      {normalPanel ||
+                        Array.from({ length: variant.switches / 2 }, (_, i) => {
+                          return (
+                            <DroppableCollection
+                              key={`${indexs}-${i}`}
+                              id={`${indexs}-${i}`}
+                            />
+                          );
+                        })}
+                      {normalPanel &&
+                        Array.from({ length: variant.switches / 2 }, (_, i) => {
+                          return (
+                            <DroppableCollection
+                              key={`${indexs}-${i}`}
+                              id={`${indexs}-${i}`}
+                              normalPanel={normalPanel}
+                            />
+                          );
+                        })}
                     </div>
                   )
                 ) : (

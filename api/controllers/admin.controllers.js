@@ -4,6 +4,7 @@ import PasswordValidator from "password-validator";
 import { Admin } from "../models/Admin.js";
 import { User } from "../models/User.js";
 import { Business } from "../models/Business.js";
+import { NormalPanel } from "../models/NormalPanel.js";
 import bcryptjs from "bcryptjs";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
@@ -208,6 +209,29 @@ export const SearchBusinessController = async (req, res, next) => {
 
     const user = await Business.find(searchCriteria);
     res.status(200).json({ success: true, user });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ADD NORMAL PANEL
+export const AddNormalPanelController = async (req, res, next) => {
+  try {
+    const { name, size, glass, frame, variant } = req.body;
+
+    if (!name || !variant || !size)
+      return next(errorHandler(400, "Panel Data Is Required"));
+
+    const newNormalPanel = new NormalPanel({
+      name,
+      glass,
+      frame,
+      variant,
+      size,
+    });
+    await newNormalPanel.save();
+
+    res.status(200).json({ success: true });
   } catch (error) {
     next(error);
   }

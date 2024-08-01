@@ -11,6 +11,7 @@ const Admin = lazy(() => import("./pages/AdminPage"));
 const Business = lazy(() => import("./pages/BusinessPanelPage"));
 const CustomPanel = lazy(() => import("./pages/CustomPanelPage"));
 const ErrorPage = lazy(() => import("./pages/ErrorNotFound"));
+const ViewNormalPanel = lazy(() => import("./pages/ViewNormalPanel"));
 const CollectionPage = lazy(() =>
   import("./components/CustomiseComponents/CollectionPage")
 );
@@ -75,6 +76,7 @@ function App() {
               element={user !== null ? <PanelPage /> : <ErrorPage />}
             />
             <Route path="/normal-panels" element={<NormalPage />} />
+            <Route path="/normal-panels/:id" element={<ViewNormalPanel />} />
           </Routes>
         </BrowserRouter>
       </DndProvider>

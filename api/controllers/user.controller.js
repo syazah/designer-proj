@@ -11,6 +11,7 @@ import PasswordValidator from "password-validator";
 import nodemailer from "nodemailer";
 import { Panel } from "../models/Panel.js";
 import { Business } from "../models/Business.js";
+import { NormalPanel } from "../models/NormalPanel.js";
 dotenv.config();
 
 const canCreate = [100, 10, 25];
@@ -273,6 +274,36 @@ export const UpdatePanelDataController = async (req, res, next) => {
     const { panelSpecs, id } = req.body;
     await Panel.findOneAndUpdate({ _id: id }, { panelData: panelSpecs });
     res.status(200).json({ success: true, panelSpecs });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//GET NORMAL PANEL
+export const GetNormalPanelController = async (req, res, next) => {
+  try {
+    const panels = await NormalPanel.find({});
+    res.status(200).json({ success: true, panels });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// GET SINGLE NORMAL PANEL
+export const GetSingleNormalPanel = async (req, res, next) => {
+  try {
+    const { userID, panelID } = req.body;
+    if (!userID || !panelID)
+      return next(errorHandler(400, "Something Went Wrong"));
+
+    const collections = await User.findOne({ _id: userID })
+      .select("collectionsCreated")
+      .populate({ path: "collectionsCreated", populate: { path: "panels" } });
+    const panel = await NormalPanel.findOne({ _id: panelID });
+    if (!collections || !panel)
+      return next(errorHandler(400, "Something Went Wrong, Try Again Later"));
+
+    res.status(200).json({ success: true, collections, panel });
   } catch (error) {
     next(error);
   }
