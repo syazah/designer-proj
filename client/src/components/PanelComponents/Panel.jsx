@@ -3,8 +3,9 @@ import DroppableCollection from "./DroppableCollection";
 import CurtainVariant from "../VariantComponent/CurtainVariant";
 import FansVariant from "../VariantComponent/FansVariant";
 import PlugVariant from "../VariantComponent/PlugVariant";
-import { PanelContext } from "../../context/PanelContextProvider";
+import DimmerVariant from "../VariantComponent/DimmerVariant";
 function Panel({
+  spaceLeft,
   normalPanel = false,
   panelSize,
   panelGlass,
@@ -13,7 +14,6 @@ function Panel({
   normalPanelRegSize = false,
   panelIcons = [],
 }) {
-  const { spaceLeft } = useContext(PanelContext);
   // PANEL WIDTH AND HEIGHT
   let panelWidth, panelHeight;
   if (panelSize === 2) {
@@ -56,6 +56,16 @@ function Panel({
         </div>
       ) : (
         <>
+          {panelVariant.filter((el) => el === "ext").length >= 2 && (
+            <React.Fragment>
+              <div className="flex items-center gap-[20px]">
+                {Array.from({ length: 1 }, (_, i) => {
+                  return <PlugVariant key={`plug-${i}`} />;
+                })}
+              </div>
+            </React.Fragment>
+          )}
+
           {panelVariant.map((variant, indexs) => {
             return (
               <React.Fragment key={indexs}>
@@ -108,10 +118,18 @@ function Panel({
                     })}
                   </div>
                 )}
+
                 {variant.fans > 0 && (
                   <div className="flex items-center gap-[20px]">
                     {Array.from({ length: variant.fans }, (_, i) => {
                       return <FansVariant key={`fans-${i}`} />;
+                    })}
+                  </div>
+                )}
+                {variant.dimmers > 0 && (
+                  <div className="flex items-center gap-[20px]">
+                    {Array.from({ length: variant.dimmers }, (_, i) => {
+                      return <DimmerVariant key={`0-dimmers-${i}`} />;
                     })}
                   </div>
                 )}
@@ -133,17 +151,15 @@ function Panel({
           )}
 
           {/* EXTENSIONS  */}
-          {panelVariant.map((variant, i) => (
-            <React.Fragment key={i}>
-              {variant.plugs > 0 && (
-                <div className="flex items-center gap-[20px]">
-                  {Array.from({ length: variant.plugs }, (_, i) => {
-                    return <PlugVariant key={`plug-${i}`} />;
-                  })}
-                </div>
-              )}
+          {panelVariant.filter((el) => el === "ext").length >= 1 && (
+            <React.Fragment>
+              <div className="flex items-center gap-[20px]">
+                {Array.from({ length: 1 }, (_, i) => {
+                  return <PlugVariant key={`plug-${i}`} />;
+                })}
+              </div>
             </React.Fragment>
-          ))}
+          )}
         </>
       )}
     </div>

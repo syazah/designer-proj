@@ -6,7 +6,7 @@ import getImageOfComponent from "../../../data/DownloadPanels/GetImageOfComponen
 import getPdfOfComponent from "../../../data/DownloadPanels/GetPdfOfComponent";
 import { PanelContext } from "../../context/PanelContextProvider";
 import BigPanel from "../PanelComponents/BigPanel";
-function CollectionPanels({ panels, setAddPanelPopup }) {
+function CollectionPanels({ panels, setAddPanelPopup, normalPanels }) {
   const collectionRef = useRef(null);
   const { setPanelCollectionContext } = useContext(PanelContext);
   useEffect(() => {
@@ -43,16 +43,37 @@ function CollectionPanels({ panels, setAddPanelPopup }) {
 
       {/* PANEL  */}
 
-      {panels.length === 0 ? (
+      {panels.length === 0 && normalPanels.length === 0 ? (
         <h1 className="text-xl text-red-600">
           *No Panels To Show Kindly Refresh Or Add A New Panel{" "}
         </h1>
       ) : (
-        <div ref={collectionRef} className="w-full mt-8 flex flex-col gap-4">
-          {panels?.map((panel, index) => {
-            return <AvailablePanel key={index} panel={panel} />;
-          })}
-        </div>
+        <>
+          <h1 className="text-2xl font-semibold text-white">CUSTOM PANELS</h1>
+          {panels.length > 0 && (
+            <div
+              ref={collectionRef}
+              className="w-full mt-8 flex flex-col gap-4"
+            >
+              {panels?.map((panel, index) => {
+                return <AvailablePanel key={index} panel={panel} />;
+              })}
+            </div>
+          )}
+          <h1 className="text-2xl font-semibold text-white mt-8">
+            NORMAL PANELS
+          </h1>
+          {normalPanels.length > 0 && (
+            <div
+              ref={collectionRef}
+              className="w-full mt-8 flex flex-col gap-4"
+            >
+              {normalPanels?.map((panel, index) => {
+                return <NormalPanel key={`${index}-normal`} panel={panel} />;
+              })}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
@@ -103,6 +124,7 @@ function AvailablePanel({ panel }) {
       >
         {panel?.panelData != null && panel?.panelData.panelSize < 12 ? (
           <Panel
+            spaceLeft={panel.panelData.savedSpaceLeft}
             panelSize={panel.panelData.panelSize}
             panelGlass={panel.panelData.panelGlass}
             panelFrame={panel.panelData.panelFrame}
@@ -111,6 +133,8 @@ function AvailablePanel({ panel }) {
           />
         ) : (
           <BigPanel
+            upSpace={panel.panelData.savedUpSpace}
+            spaceLeft={panel.panelData.savedSpaceLeft}
             panelGlass={panel.panelData.panelGlass}
             panelFrame={panel.panelData.panelFrame}
             panelVariant={panel.panelData.bigPanelVariant}
@@ -244,6 +268,28 @@ function AvailablePanel({ panel }) {
           </h2>
         </div>
       </div>
+    </div>
+  );
+}
+
+function NormalPanel({ panel }) {
+  return (
+    <div
+      style={{ backgroundColor: panel.panelWall }}
+      className="w-full h-[400px] flex flex-col justify-center items-center bg-zinc-900 rounded-2xl p-2 gap-2"
+    >
+      <h1 className="text-white text-xl">
+        Normal Panel :- {panel.panelID.name}
+      </h1>
+      <Panel
+        normalPanel={true}
+        normalPanelRegSize={true}
+        panelSize={panel.panelID.size}
+        panelFrame={panel.panelFrame}
+        panelGlass={panel.panelGlass}
+        panelVariant={panel.panelID.variant}
+        panelIcons={{}}
+      />
     </div>
   );
 }

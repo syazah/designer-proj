@@ -38,9 +38,11 @@ export const GetCollectionController = async (req, res, next) => {
     if (!id) {
       return next(errorHandler(400, "Some Unexpected Error"));
     }
-    const collection = await Collection.findOne({ _id: id }).populate({
-      path: "panels",
-    });
+    const collection = await Collection.findOne({ _id: id })
+      .populate({
+        path: "panels",
+      })
+      .populate({ path: "normalPanels.panelID" });
     res.status(200).json({ success: true, collection });
   } catch (error) {
     return next(error);

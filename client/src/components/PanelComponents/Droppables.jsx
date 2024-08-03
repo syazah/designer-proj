@@ -9,15 +9,15 @@ function Droppables({ dropId, iconData, normalPanel }) {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "image",
     drop: (item) => {
-      showImageLogic(item.id);
+      showImageLogic(item.id, item.mainId);
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),
   }));
   // SHOW IMAGE LOGIC
-  function showImageLogic(id) {
-    const imageData = PanelIcons.filter((img) => img.id === id);
+  function showImageLogic(id, mainId) {
+    const imageData = PanelIcons[mainId].filter((img) => img.id === id);
     if (imageData && dropId) {
       setPanelSpecs((prevSpecs) => ({
         ...prevSpecs,
@@ -31,6 +31,7 @@ function Droppables({ dropId, iconData, normalPanel }) {
       alert("Image or dropId not found:");
     }
   }
+  console.log(imageDetail);
   return (
     <>
       {normalPanel ? (
@@ -64,7 +65,7 @@ function Droppables({ dropId, iconData, normalPanel }) {
             imageDetail != null && (
               <img
                 className="w-full h-full object-contain"
-                src={imageDetail.src}
+                src={imageDetail?.src}
               />
             )
           )}

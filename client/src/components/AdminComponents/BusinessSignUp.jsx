@@ -177,6 +177,7 @@ function SecondPart({
       const data = await res.json();
       if (data.success === false) {
         setLoading(false);
+        alert(data.message);
         return setError(data.message);
       }
       if (res.ok && data.success === true) {
@@ -189,6 +190,7 @@ function SecondPart({
         setVerifyOtp(true);
       }
     } catch (error) {
+      alert(JSON.stringify(error));
       setError(JSON.stringify(error));
       setLoading(false);
     }
@@ -206,6 +208,7 @@ function SecondPart({
       const data = await res.json();
       if (data.success === false) {
         setError(data.message);
+        alert(data.message);
       }
       if (data.success === true) {
         setOtpLoading(false);
@@ -215,6 +218,7 @@ function SecondPart({
     } catch (error) {
       setError(JSON.stringify(error));
       setOtpLoading(false);
+      alert(JSON.stringify(error));
     }
   }
 

@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import {
   PanelExtensions,
   PanelFrame,
@@ -20,6 +20,9 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
     upSpace,
     setUpSpace,
   } = useContext(PanelContext);
+
+  const [selectedIcons, setSelectedIcons] = useState(-1);
+
   return (
     <div className="bg-zinc-950 h-full w-[15%] border-l-[1px] border-zinc-900 overflow-y-scroll">
       {/* SIZE  */}
@@ -54,8 +57,57 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
                       if (spaceLeft === 0 || spaceLeft - variants.cost < 0) {
                         return setCantAddMore(true);
                       }
+                      //   if (panelSpecs.panelSize >= 12) {
+                      //     let newPanelVariant;
+                      //     if (upSpace - variants.cost >= 0) {
+                      //       newPanelVariant = [
+                      //         [
+                      //           ...panelSpecs.bigPanelVariant[0],
+                      //           { ...variants.variant },
+                      //         ],
+                      //         [...panelSpecs.bigPanelVariant[1]],
+                      //       ];
+                      //       setPanelSpecs({
+                      //         ...panelSpecs,
+                      //         bigPanelVariant: newPanelVariant,
+                      //         savedUpSpace: upSpace - variants.cost,
+                      //       });
+                      //       setUpSpace(upSpace - variants.cost);
+                      //     } else {
+                      //       newPanelVariant = [
+                      //         [...panelSpecs.bigPanelVariant[0]],
+                      //         [
+                      //           ...panelSpecs.bigPanelVariant[1],
+                      //           { ...variants.variant },
+                      //         ],
+                      //       ];
+                      //     }
+                      //     const newPanelSpecs = {
+                      //       ...panelSpecs,
+                      //       bigPanelVariant: newPanelVariant,
+                      //       savedSpaceLeft: spaceLeft - variants.cost,
+                      //     };
+                      //     setPanelSpecs(newPanelSpecs);
+                      //     return setSpaceLeft(spaceLeft - variants.cost);
+                      //   }
+                      //   else {
+                      //     const newPanelVariant = [
+                      //       ...panelSpecs.panelVariant,
+                      //       { ...variants.variant },
+                      //     ];
+                      //     const newPanelSpecs = {
+                      //       ...panelSpecs,
+                      //       panelVariant: newPanelVariant,
+                      //       savedSpaceLeft: spaceLeft - variants.cost,
+                      //     };
+                      //     setPanelSpecs(newPanelSpecs);
+                      //     return setSpaceLeft(spaceLeft - variants.cost);
+                      //   }
+
+                      let newPanelVariant;
+
                       if (panelSpecs.panelSize >= 12) {
-                        let newPanelVariant;
+                        // Determine the new panel variant based on available space
                         if (upSpace - variants.cost >= 0) {
                           newPanelVariant = [
                             [
@@ -64,6 +116,13 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
                             ],
                             [...panelSpecs.bigPanelVariant[1]],
                           ];
+                          // Update panelSpecs and upSpace if there is enough space
+                          setPanelSpecs((prevSpecs) => ({
+                            ...prevSpecs,
+                            bigPanelVariant: newPanelVariant,
+                            savedUpSpace: upSpace - variants.cost,
+                            savedSpaceLeft: spaceLeft - variants.cost,
+                          }));
                           setUpSpace(upSpace - variants.cost);
                         } else {
                           newPanelVariant = [
@@ -74,24 +133,28 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
                             ],
                           ];
                         }
-                        const newPanelSpecs = {
-                          ...panelSpecs,
+
+                        // Update panelSpecs and spaceLeft if not enough upSpace
+                        setPanelSpecs((prevSpecs) => ({
+                          ...prevSpecs,
                           bigPanelVariant: newPanelVariant,
-                        };
-                        setPanelSpecs(newPanelSpecs);
-                        return setSpaceLeft(spaceLeft - variants.cost);
+                          savedSpaceLeft: spaceLeft - variants.cost,
+                        }));
                       } else {
-                        const newPanelVariant = [
+                        // For smaller panels, simply update panelVariant
+                        newPanelVariant = [
                           ...panelSpecs.panelVariant,
                           { ...variants.variant },
                         ];
-                        const newPanelSpecs = {
-                          ...panelSpecs,
+                        setPanelSpecs((prevSpecs) => ({
+                          ...prevSpecs,
                           panelVariant: newPanelVariant,
-                        };
-                        setPanelSpecs(newPanelSpecs);
-                        return setSpaceLeft(spaceLeft - variants.cost);
+                          savedSpaceLeft: spaceLeft - variants.cost,
+                        }));
                       }
+
+                      // Update spaceLeft regardless of the panel size
+                      setSpaceLeft(spaceLeft - variants.cost);
                     }}
                   >
                     {variants.variant.switches > 0 && (
@@ -137,13 +200,20 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
                     key={i}
                     className="border-b-2 border-zinc-800 hover:bg-red-600 p-2 cursor-pointer"
                     onClick={() => {
-                      const extCount = panelSpecs.panelVariant.reduce(
+                      let extCount = panelSpecs.panelVariant.reduce(
                         (count, curr) => {
                           return curr === "ext" ? count + 1 : count;
                         },
                         0
                       );
-
+                      if (panelSpecs.panelSize === 12) {
+                        extCount = panelSpecs.bigPanelVariant[1].reduce(
+                          (count, curr) => {
+                            return curr === "ext" ? count + 1 : count;
+                          },
+                          0
+                        );
+                      }
                       if (
                         (panelSpecs.panelSize === 6 && extCount >= 2) ||
                         (panelSpecs.panelSize === 12 && extCount >= 2) ||
@@ -155,6 +225,17 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
                       }
                       if (spaceLeft === 0 || spaceLeft - variants.cost < 0) {
                         return setCantAddMore(true);
+                      } else if (panelSpecs.panelSize === 12) {
+                        const newPanelVariant = [
+                          [...panelSpecs.bigPanelVariant[0]],
+                          [...panelSpecs.bigPanelVariant[1], "ext"],
+                        ];
+                        setPanelSpecs((prevSpecs) => ({
+                          ...prevSpecs,
+                          bigPanelVariant: newPanelVariant,
+                          savedSpaceLeft: spaceLeft - variants.cost,
+                        }));
+                        return setSpaceLeft(spaceLeft - variants.cost);
                       } else {
                         const newPanelVariant = [
                           ...panelSpecs.panelVariant,
@@ -164,6 +245,7 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
                         const newPanelSpecs = {
                           ...panelSpecs,
                           panelVariant: newPanelVariant,
+                          savedSpaceLeft: spaceLeft - variants.cost,
                         };
                         setPanelSpecs(newPanelSpecs);
                         return setSpaceLeft(spaceLeft - variants.cost);
@@ -219,8 +301,8 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
             </div>
           );
         })}
-      {/* WALLS  */}
 
+      {/* WALLS  */}
       {sidebarToolShows === "wall" && (
         <div className="w-full flex flex-wrap gap-2 p-2">
           {PanelWalls.map((wall, index) => {
@@ -241,12 +323,76 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
           })}
         </div>
       )}
+
       {/* ICONS  */}
       {sidebarToolShows === "icons" && (
         <div className="w-full flex gap-2 justify-center items-start flex-wrap mt-2 px-2">
-          {PanelIcons.map((icon) => {
-            return <Draggable key={icon.id} id={icon.id} src={icon.src} />;
-          })}
+          {[
+            { id: 0, title: "Alphabets" },
+            { id: 1, title: "Lights" },
+            { id: 2, title: "Lamps" },
+            { id: 3, title: "Fans" },
+            { id: 4, title: "Switches" },
+            { id: 5, title: "Scenes" },
+          ].map((item, index) => (
+            <div
+              key={index}
+              onClick={() => {
+                if (selectedIcons === item.id) {
+                  setSelectedIcons(-1);
+                } else {
+                  setSelectedIcons(item.id);
+                }
+              }}
+              className="flex w-full justify-between items-center"
+            >
+              <h1 className="text-base text-white">{item.title}</h1>
+              <div className="w-6 h-6 rounded-full bg-red-800 flex justify-center items-center font-semibold text-2xl cursor-pointer hover:bg-red-600 transition-all duration-300">
+                {selectedIcons === item.id ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                )}
+              </div>
+            </div>
+          ))}
+          {selectedIcons >= 0 &&
+            PanelIcons[selectedIcons].map((icon) => {
+              return (
+                <Draggable
+                  key={icon.id}
+                  mainId={selectedIcons}
+                  id={icon.id}
+                  src={icon.src}
+                />
+              );
+            })}
         </div>
       )}
     </div>

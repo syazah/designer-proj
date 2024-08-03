@@ -12,6 +12,8 @@ function PanelContextProvider({ children }) {
     panelWall: "",
     droppableType: 1,
     droppableColor: "#17c5e2",
+    savedSpaceLeft: 12,
+    savedUpSpace: 6,
   });
   const [spaceLeft, setSpaceLeft] = useState(panelSpecs.panelSize);
   const [panelCollectionContext, setPanelCollectionContext] = useState(null);

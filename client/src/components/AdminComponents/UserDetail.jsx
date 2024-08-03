@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Loading from "../Loading";
 import Panel from "../PanelComponents/Panel";
+import BigPanel from "../PanelComponents/BigPanel";
 
 function UserDetail() {
   const { id } = useParams();
@@ -106,14 +107,32 @@ function UserDetail() {
                           backgroundColor:
                             panel.panelData?.panelWall ?? "#121217",
                         }}
-                        className="available-panel flex justify-center items-center w-full h-[400px]"
+                        className={`available-panel flex justify-center items-center w-full ${
+                          panel.panelData.panelSize < 12
+                            ? "h-[400px]"
+                            : "h-[500px]"
+                        }`}
                       >
-                        {panel?.panelData != null && (
+                        {panel?.panelData != null &&
+                        panel?.panelData.panelSize < 12 ? (
                           <Panel
+                            spaceLeft={panel.panelData.savedSpaceLeft}
                             panelSize={panel.panelData.panelSize}
                             panelGlass={panel.panelData.panelGlass}
                             panelFrame={panel.panelData.panelFrame}
                             panelVariant={panel.panelData.panelVariant}
+                            panelIcons={Object.entries(
+                              panel.panelData?.panelIcons || {}
+                            )}
+                          />
+                        ) : (
+                          <BigPanel
+                            upSpace={panel.panelData.savedUpSpace}
+                            spaceLeft={panel.panelData.savedSpaceLeft}
+                            showExtraSpace={false}
+                            panelGlass={panel.panelData.panelGlass}
+                            panelFrame={panel.panelData.panelFrame}
+                            panelVariant={panel.panelData.bigPanelVariant}
                             panelIcons={Object.entries(
                               panel.panelData?.panelIcons || {}
                             )}

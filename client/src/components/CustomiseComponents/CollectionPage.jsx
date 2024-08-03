@@ -11,6 +11,7 @@ function CollectionPage() {
   const { user } = useContext(UserAuthContext);
   const [collection, setCollection] = useState(null);
   const [panels, setPanels] = useState([]);
+  const [normalPanels, setNormalPanels] = useState([]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const [addPanelPopup, setAddPanelPopup] = useState(false);
@@ -36,6 +37,7 @@ function CollectionPage() {
       if (res.ok && data.success === true) {
         setCollection(data.collection);
         setPanels(data.collection.panels);
+        setNormalPanels(data.collection.normalPanels);
       } else {
         alert(data.message);
       }
@@ -46,8 +48,9 @@ function CollectionPage() {
   }
   useEffect(() => {
     GetCollection();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+  console.log(normalPanels);
   // HANDLE CREATE PANEL
   async function HandleCreatePanel() {
     try {
@@ -186,7 +189,8 @@ function CollectionPage() {
               <CollectionPanels
                 setAddPanelPopup={setAddPanelPopup}
                 panels={panels}
-              ></CollectionPanels>
+                normalPanels={normalPanels}
+              />
             ) : (
               <></>
             )}

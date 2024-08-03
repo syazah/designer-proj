@@ -308,3 +308,38 @@ export const GetSingleNormalPanel = async (req, res, next) => {
     next(error);
   }
 };
+
+// ADD NORMAL PANEL COLLECTION
+export const AddNormalPanelCollection = async (req, res, next) => {
+  try {
+    const { collectionId, panelGlass, panelFrame, panelWall, panelId } =
+      req.body;
+    if (!collectionId) {
+      return next(errorHandler(400, "No Collection ID Found"));
+    }
+    const collection = await Collection.findOne({ _id: collectionId });
+    if (!collection) return next(errorHandler(400, "Collection Not Present"));
+    const panelPresent = collection.normalPanels.filter((item) =>
+      item.panelID.equals(panelId)
+    );
+    if (panelPresent.length > 0)
+      return next(errorHandler(400, "Panel Already Present"));
+    await Collection.findOneAndUpdate(
+      { _id: collectionId },
+      {
+        $push: {
+          normalPanels: {
+            panelID: panelId,
+            panelFrame,
+            panelGlass,
+            panelWall,
+          },
+        },
+      }
+    );
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    return next(error);
+  }
+};

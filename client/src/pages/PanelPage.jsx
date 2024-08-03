@@ -18,7 +18,8 @@ function PanelPage() {
   const settingRef = useRef(null);
   const [sidebarToolShows, setSidebarToolShows] = useState("");
   const [panelUpdating, setPanelUpdating] = useState(false);
-  const { panelSpecs, setPanelSpecs, spaceLeft } = useContext(PanelContext);
+  const { panelSpecs, setPanelSpecs, spaceLeft, upSpace } =
+    useContext(PanelContext);
 
   //DEBOUNCE STORE PANEL STATE
   async function UpdatePanelData() {
@@ -295,12 +296,15 @@ function PanelPage() {
             >
               {panelSpecs.panelSize === 12 ? (
                 <BigPanel
+                  upSpace={upSpace}
+                  spaceLeft={spaceLeft}
                   panelGlass={panelSpecs.panelGlass}
                   panelFrame={panelSpecs.panelFrame}
                   panelVariant={panelSpecs.bigPanelVariant}
                 />
               ) : (
                 <Panel
+                  spaceLeft={spaceLeft}
                   panelSize={panelSpecs.panelSize}
                   panelGlass={panelSpecs.panelGlass}
                   panelFrame={panelSpecs.panelFrame}

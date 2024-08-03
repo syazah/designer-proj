@@ -1,11 +1,20 @@
-import React, { useContext } from "react";
 import DroppableCollection from "./DroppableCollection";
 import CurtainVariant from "../VariantComponent/CurtainVariant";
 import FansVariant from "../VariantComponent/FansVariant";
 import PlugVariant from "../VariantComponent/PlugVariant";
-import { PanelContext } from "../../context/PanelContextProvider";
-function BigPanel({ panelGlass, panelFrame, panelVariant, panelIcons = [] }) {
-  const { spaceLeft, upSpace } = useContext(PanelContext);
+import React from "react";
+import DimmerVariant from "../VariantComponent/DimmerVariant";
+function BigPanel({
+  upSpace,
+  spaceLeft,
+  showExtraSpace = true,
+  panelGlass,
+  panelFrame,
+  panelVariant,
+  panelIcons = [],
+}) {
+  console.log(upSpace);
+  console.log(spaceLeft);
   // PANEL
   return (
     <div
@@ -20,7 +29,7 @@ function BigPanel({ panelGlass, panelFrame, panelVariant, panelIcons = [] }) {
       {panelVariant[0].length === 0 && panelVariant[1].length === 0 ? (
         <div className="w-full flex flex-col h-full justify-center items-center gap-[10px]">
           {panelVariant[0].length === 0 && (
-            <div className="w-full flex justify-center items-center gap-[20px] p-2">
+            <div className="w-full flex justify-center items-center gap-[30px] p-2">
               {Array.from({ length: 3 }, (_, i) => {
                 return (
                   <div
@@ -32,7 +41,7 @@ function BigPanel({ panelGlass, panelFrame, panelVariant, panelIcons = [] }) {
             </div>
           )}
           {panelVariant[1].length === 0 && (
-            <div className="w-full flex justify-center items-center gap-[20px] p-2">
+            <div className="w-full flex justify-center items-center gap-[30px] p-2">
               {Array.from({ length: 3 }, (_, i) => {
                 return (
                   <div
@@ -101,11 +110,18 @@ function BigPanel({ panelGlass, panelFrame, panelVariant, panelIcons = [] }) {
                       })}
                     </div>
                   )}
+                  {variant.dimmers > 0 && (
+                    <div className="flex items-center gap-[20px]">
+                      {Array.from({ length: variant.dimmers }, (_, i) => {
+                        return <DimmerVariant key={`0-dimmers-${i}`} />;
+                      })}
+                    </div>
+                  )}
                 </React.Fragment>
               );
             })}
 
-            {upSpace > 0 && (
+            {showExtraSpace && upSpace > 0 && (
               <div className="flex items-center gap-[20px]">
                 {Array.from({ length: upSpace / 2 }, (_, i) => {
                   return (
@@ -134,6 +150,16 @@ function BigPanel({ panelGlass, panelFrame, panelVariant, panelIcons = [] }) {
 
           {/* DOWN  */}
           <div className=" flex justify-start items-center gap-[30px]">
+            {/* EXTENSIONS  */}
+            {panelVariant[1].filter((el) => el === "ext").length >= 2 && (
+              <React.Fragment>
+                <div className="flex items-center gap-[20px]">
+                  {Array.from({ length: 1 }, (_, i) => {
+                    return <PlugVariant key={`plug-${i}`} />;
+                  })}
+                </div>
+              </React.Fragment>
+            )}
             {panelVariant[1].map((variant, indexs) => {
               return (
                 <React.Fragment key={indexs}>
@@ -188,6 +214,13 @@ function BigPanel({ panelGlass, panelFrame, panelVariant, panelIcons = [] }) {
                       })}
                     </div>
                   )}
+                  {variant.dimmers > 0 && (
+                    <div className="flex items-center gap-[20px]">
+                      {Array.from({ length: variant.dimmers }, (_, i) => {
+                        return <DimmerVariant key={`0-dimmers-${i}`} />;
+                      })}
+                    </div>
+                  )}
                 </React.Fragment>
               );
             })}
@@ -204,19 +237,16 @@ function BigPanel({ panelGlass, panelFrame, panelVariant, panelIcons = [] }) {
                 })}
               </div>
             )}
-
             {/* EXTENSIONS  */}
-            {panelVariant[1].map((variant, i) => (
-              <React.Fragment key={i}>
-                {variant.plugs > 0 && (
-                  <div className="flex items-center gap-[20px]">
-                    {Array.from({ length: variant.plugs }, (_, i) => {
-                      return <PlugVariant key={`1-plug-${i}`} />;
-                    })}
-                  </div>
-                )}
+            {panelVariant[1].filter((el) => el === "ext").length >= 1 && (
+              <React.Fragment>
+                <div className="flex items-center gap-[20px]">
+                  {Array.from({ length: 1 }, (_, i) => {
+                    return <PlugVariant key={`plug-${i}`} />;
+                  })}
+                </div>
               </React.Fragment>
-            ))}
+            )}
           </div>
         </div>
       )}

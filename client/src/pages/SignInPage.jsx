@@ -101,7 +101,10 @@ function BusinessLogin({
   const navigate = useNavigate();
   const { setInitialSignIn } = useContext(PanelContext);
   function handleFormData(e) {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value.trim(" ").trim(" "),
+    });
   }
 
   async function handleBusinessLogin(e) {
@@ -218,7 +221,7 @@ function ClientLogin({
   const { setInitialSignIn } = useContext(PanelContext);
   //HANDLE FORM DATA
   function handleFormData(e) {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setFormData({ ...formData, [e.target.id]: e.target.value.trim(" ") });
   }
   // HANDLE SIGN IN
   async function handleSignIn(e) {

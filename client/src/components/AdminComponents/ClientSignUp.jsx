@@ -173,7 +173,7 @@ function SecondPart({
     } catch (error) {
       setLoading(false);
       setError(JSON.stringify(error));
-      console.log(error);
+      alert(JSON.stringify(error));
     }
   }
 

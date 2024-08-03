@@ -19,7 +19,7 @@ function FansVariant() {
           style={{ borderColor: panelSpecs.droppableColor }}
           className={`w-[50px] h-[50px] rounded-full border-2 flex justify-center items-center p-1`}
         >
-          <img className="w-full" src="/ICONS/fans/fan01.png" />
+          <img className="w-full" src="/ICONS/fans/fan1.png" />
         </div>
       </div>
       <div className="w-[74px] flex flex-col items-center gap-[40px] justify-center">

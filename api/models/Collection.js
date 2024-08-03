@@ -18,6 +18,14 @@ const CollectionModel = new mongoose.Schema(
       type: [mongoose.Schema.Types.ObjectId],
       ref: "Panel",
     },
+    normalPanels: [
+      {
+        panelID: { type: mongoose.Schema.Types.ObjectId, ref: "NormalPanel" },
+        panelFrame: String,
+        panelGlass: String,
+        panelWall: String,
+      },
+    ],
   },
   { timestamps: true }
 );
