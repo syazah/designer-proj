@@ -83,7 +83,7 @@ function NormalPanelContent() {
                         </div>
                       </div>
                       <div className="group-hover:translate-x-[1000px] transition-all duration-500">
-                        {data.size < 12 ? (
+                        {data.size < 12 && (
                           <Panel
                             normalPanel={true}
                             panelSize={data.size}
@@ -92,7 +92,7 @@ function NormalPanelContent() {
                             panelVariant={data.variant}
                             panelIcons={{}}
                           />
-                        ):<BigPa}
+                        )}
                       </div>
                     </div>
 
