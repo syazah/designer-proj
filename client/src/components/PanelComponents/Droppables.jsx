@@ -31,7 +31,6 @@ function Droppables({ dropId, iconData, normalPanel }) {
       alert("Image or dropId not found:");
     }
   }
-  console.log(imageDetail);
   return (
     <>
       {normalPanel ? (

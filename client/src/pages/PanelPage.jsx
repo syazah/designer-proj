@@ -292,7 +292,7 @@ function PanelPage() {
                   ? { width: "85%", backgroundColor: panelSpecs.panelWall }
                   : { width: "100%", backgroundColor: panelSpecs.panelWall }
               }
-              className={`flex justify-center items-center h-full`}
+              className={`flex justify-center items-center h-full transition-all duration-500`}
             >
               {panelSpecs.panelSize === 12 ? (
                 <BigPanel

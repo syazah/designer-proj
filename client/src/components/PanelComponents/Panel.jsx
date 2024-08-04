@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import DroppableCollection from "./DroppableCollection";
 import CurtainVariant from "../VariantComponent/CurtainVariant";
 import FansVariant from "../VariantComponent/FansVariant";
@@ -56,6 +56,17 @@ function Panel({
         </div>
       ) : (
         <>
+          {normalPanel &&
+            panelVariant.filter((el) => el.plugs > 1).length > 0 && (
+              <React.Fragment>
+                <div className="flex items-center gap-[20px]">
+                  {Array.from({ length: 1 }, (_, i) => {
+                    return <PlugVariant key={`plug-${i}`} />;
+                  })}
+                </div>
+              </React.Fragment>
+            )}
+
           {panelVariant.filter((el) => el === "ext").length >= 2 && (
             <React.Fragment>
               <div className="flex items-center gap-[20px]">
@@ -160,6 +171,16 @@ function Panel({
               </div>
             </React.Fragment>
           )}
+          {normalPanel &&
+            panelVariant.filter((el) => el.plugs > 0).length >= 1 && (
+              <React.Fragment>
+                <div className="flex items-center gap-[20px]">
+                  {Array.from({ length: 1 }, (_, i) => {
+                    return <PlugVariant key={`plug-${i}`} />;
+                  })}
+                </div>
+              </React.Fragment>
+            )}
         </>
       )}
     </div>

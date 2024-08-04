@@ -129,7 +129,6 @@ function UserDetail() {
                           <BigPanel
                             upSpace={panel.panelData.savedUpSpace}
                             spaceLeft={panel.panelData.savedSpaceLeft}
-                            showExtraSpace={false}
                             panelGlass={panel.panelData.panelGlass}
                             panelFrame={panel.panelData.panelFrame}
                             panelVariant={panel.panelData.bigPanelVariant}

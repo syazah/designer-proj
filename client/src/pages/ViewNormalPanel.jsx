@@ -13,6 +13,7 @@ function ViewNormalPanel() {
   const [collectionValue, setCollectionValue] = useState("");
 
   const [addCollectionLoading, setAddCollectionLoading] = useState(false);
+  console.log(panelInfo);
 
   async function GETPanel() {
     try {
