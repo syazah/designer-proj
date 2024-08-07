@@ -29,9 +29,7 @@ function HomePage() {
       {/* NAVBAR  */}
       <div className="w-full flex justify-between items-center p-2 shadow-xl">
         <div>
-          <h1 className="text-2xl font-semibold tracking-wider text-white">
-            ALISAN
-          </h1>
+          <h1 className="text-2xl font-semibold tracking-wider text-white"></h1>
         </div>
         <div className="flex justify-center gap-4">
           <Link className="h-[40px] px-5 bg-red-600 rounded-full text-base flex justify-center items-center">
