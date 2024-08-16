@@ -18,6 +18,9 @@ const transporter = nodemailer.createTransport({
     user: process.env.AUTH_MAIL,
     pass: process.env.APP_PASSWORD,
   },
+  tls: {
+    rejectUnauthorized: false, // Accept self-signed certificates
+  },
 });
 
 export const BusinessSignupController = async (req, res, next) => {
