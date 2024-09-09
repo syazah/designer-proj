@@ -10,6 +10,7 @@ function SignInPage() {
   const [loading, setLoading] = useState(false);
   return (
     <div className="w-full h-[100vh] bg-zinc-950 p-4 flex flex-col">
+      {/* SIGN IN METHOD SELECTOR  */}
       <div className="flex justify-start items-center w-full border-b-2 border-zinc-900 gap-2">
         <h1 className=" text-red-600 text-xl py-2 font-semibold ">
           Sign In As
@@ -43,8 +44,10 @@ function SignInPage() {
           </option>
         </select>
       </div>
-      <div className="w-full h-full flex justify-center items-center pt-2">
-        <div className="w-1/2 h-full">
+
+      {/* LOGIN  */}
+      <div className="w-full h-full flex flex-col md:flex-row justify-center items-center pt-2">
+        <div className="w-full md:w-1/2 h-full">
           {signInOption === "client" ? (
             <ClientLogin
               formData={formData}
@@ -83,7 +86,7 @@ function SignInPage() {
             </div>
           )}
         </div>
-        <div className="w-1/2 h-full bg-[url('https://images.pexels.com/photos/8347501/pexels-photo-8347501.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] bg-no-repeat bg-cover bg-center"></div>
+        <div className="w-full md:w-1/2 h-full bg-[url('https://images.pexels.com/photos/8347501/pexels-photo-8347501.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] bg-no-repeat bg-cover bg-center"></div>
       </div>
     </div>
   );
@@ -148,25 +151,21 @@ function BusinessLogin({
       <form className="flex flex-col justify-start items-start w-2/3 gap-2">
         <label className="flex flex-col justify-start items-start gap-2 w-full">
           <h3 className="text-lg text-white">Business Name</h3>
-          <div className="w-full flex justify-center items-center bg-zinc-900 rounded-full p-2">
-            <input
-              id="name"
-              onChange={handleFormData}
-              placeholder="alisan smart homes"
-              className="w-full p-2 bg-zinc-900 rounded-full text-white focus:outline-none focus:border-none"
-            />
-          </div>
+          <input
+            id="name"
+            onChange={handleFormData}
+            placeholder="xyz company"
+            className="w-full p-2 bg-zinc-900 rounded-full text-white focus:outline-none focus:border-none"
+          />
         </label>
         <label className="flex flex-col justify-start items-start gap-2 w-full">
           <h3 className="text-lg text-white">Business Code</h3>
-          <div className="w-full flex justify-center items-center bg-zinc-900 rounded-full p-2">
-            <input
-              id="code"
-              onChange={handleFormData}
-              placeholder="******"
-              className="w-full p-2 bg-zinc-900 rounded-full text-white focus:outline-none focus:border-none"
-            />
-          </div>
+          <input
+            id="code"
+            onChange={handleFormData}
+            placeholder="******"
+            className="w-full p-2 bg-zinc-900 rounded-full text-white focus:outline-none focus:border-none"
+          />
         </label>
         <label className="flex flex-col justify-start items-start gap-2 w-full">
           <h3 className="text-lg text-white">Password</h3>
@@ -251,19 +250,21 @@ function ClientLogin({
     }
   }
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center px-2 py-4 gap-4">
+    <div className="w-full h-full flex flex-col justify-center items-center md:px-2 py-4 gap-4">
       <div className="flex flex-col justify-center items-center">
-        <h1 className="text-white font-bold text-3xl">
+        <h1 className="text-white font-bold text-2xl md:text-3xl">
           Welcome Back{" "}
           <span className="text-red-600">
             {Object.keys(formData).length > 0 && formData.name}
           </span>
         </h1>
-        <p className="text-white font-normal text-lg">Enter Your Details</p>
+        <p className="text-white font-normal text-base md:text-lg">
+          Enter Your Details
+        </p>
       </div>
       <form
         onSubmit={handleSignIn}
-        className="flex flex-col justify-start items-start w-2/3 gap-2"
+        className="flex flex-col justify-start items-start w-full md:w-2/3 gap-2"
       >
         <label className="flex flex-col justify-start items-start gap-2 w-full">
           <h3 className="text-lg text-white">Your Name</h3>

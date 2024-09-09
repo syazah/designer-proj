@@ -62,13 +62,11 @@ function CustomPanelPage() {
         }
         setLoading(false);
       } catch (error) {
-        console.log(error);
         setLoading(false);
       }
     }
     getUser();
   }, [userType]);
-  console.log(completeUser);
   return (
     <div className="relative w-full min-h-[100vh] bg-zinc-800 flex flex-col">
       {/* NAVBAR  */}
@@ -79,11 +77,11 @@ function CustomPanelPage() {
 
       {/* OVERVIEW  */}
       <div className="w-full p-4">
-        <div className="w-full bg-zinc-900 rounded-2xl p-6 flex flex-col gap-4">
-          <h1 className="text-3xl text-white border-b-[2px] border-red-600">
+        <div className="w-full bg-zinc-900 rounded-lg md:rounded-2xl p-6 flex flex-col gap-4">
+          <h1 className="text-xl md:text-3xl text-white border-b-[2px] border-red-600">
             Overview
           </h1>
-          <div className="flex w-full justify-start items-center gap-4">
+          <div className="flex flex-col md:flex-row w-full justify-start items-center gap-4">
             {[
               {
                 name: "Panels Created",
@@ -105,7 +103,7 @@ function CustomPanelPage() {
               return (
                 <div
                   key={index}
-                  className="w-1/3 p-4 bg-red-600 rounded-lg shadow-xl flex justify-start items-start gap-2"
+                  className="w-full md:w-1/3 p-4 bg-red-600 rounded-lg shadow-xl flex justify-start items-start gap-2"
                 >
                   <div className="flex justify-start items-start bg-red-800 rounded-full">
                     {item.icon}
@@ -173,22 +171,22 @@ function CollectionSection({ setAddCollection, completeUser, loading }) {
         window.location.reload();
       }
     } catch (error) {
-      console.log(error);
+      alert("Error");
     }
   }
   return (
     <div className="w-full p-6 flex flex-col">
       {/* COLLECTION HEADER  */}
       <div className="flex justify-between">
-        <h1 className="text-white text-2xl border-b-[2px] border-red-600">
-          Your Collections
+        <h1 className="text-white text-lg md:text-2xl border-b-[2px] border-red-600">
+          Your Sites
         </h1>
         <button
-          className="flex justify-center items-center bg-red-600 px-4 py-2 rounded-full font-medium hover:bg-red-700 transition-all duration-200 
+          className="flex justify-center items-center bg-red-600 px-2 md:px-4 py-2 rounded-full font-medium hover:bg-red-700 transition-all duration-200
       "
           onClick={() => setAddCollection(true)}
         >
-          Add Collection +
+          Add Site +
         </button>
       </div>
 
@@ -196,7 +194,7 @@ function CollectionSection({ setAddCollection, completeUser, loading }) {
       {completeUser?.collectionsCreated.length === 0 ? (
         <div className="w-full h-full flex justify-start items-center mt-[10px]">
           <h1 className="text-lg font-medium text-red-600">
-            *Nothing To Show Here, Refresh The Page Or Add New Collection
+            *Nothing To Show Here, Refresh The Page Or Add New Site
           </h1>
         </div>
       ) : loading ? (
@@ -204,12 +202,12 @@ function CollectionSection({ setAddCollection, completeUser, loading }) {
           <img className="w-[10%]" src="/loader.gif" />
         </div>
       ) : (
-        <div className="w-full flex gap-6 p-2 mt-4 justify-start items-start">
+        <div className="w-full flex flex-col md:flex-row gap-6 p-2 mt-4 justify-start items-start">
           {completeUser?.collectionsCreated.map((collection, index) => {
             return (
               <div
                 key={index}
-                className="w-1/3 h-[280px] bg-zinc-900 border-red-600 border-2 shadow-xl rounded-2xl p-4 flex flex-col gap-4 "
+                className="w-full md:w-1/3 h-[280px] bg-zinc-900 border-red-600 border-2 shadow-xl rounded-2xl p-4 flex flex-col gap-4 "
               >
                 <h2 className="text-xl text-white border-b-[2px] border-red-600">
                   {collection.name}
@@ -272,6 +270,7 @@ function AddCollectionPopup({ completeUser, setAddCollection }) {
   const [loading, setLoading] = useState(false);
   const [collectionForm, setCollectionForm] = useState({
     _id: completeUser._id,
+    description: "",
   });
 
   // HANDLE FORM DATA
@@ -311,7 +310,7 @@ function AddCollectionPopup({ completeUser, setAddCollection }) {
           onClick={() => setAddCollection(false)}
         >
           <h1 className="text-2xl border-b-[2px] border-red-600 text-white">
-            Add New Collection
+            Add A New Site
           </h1>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -330,13 +329,11 @@ function AddCollectionPopup({ completeUser, setAddCollection }) {
         </div>
         {/* form  */}
         <div className="w-full flex flex-col py-2 gap-2">
-          <h2 className="text-lg text-red-600 font-semibold">
-            Collection Name
-          </h2>
+          <h2 className="text-lg text-red-600 font-semibold">Site Name</h2>
           <input
             id="name"
             onChange={handleForm}
-            placeholder="Title For Collection"
+            placeholder="Title For Site"
             className="w-full bg-zinc-900 rounded-lg p-2 text-white focus:outline-none focus:border-none"
           />
           <h2 className="text-lg text-red-600 font-semibold">Description</h2>
@@ -348,7 +345,7 @@ function AddCollectionPopup({ completeUser, setAddCollection }) {
               else setCharExceeded(false);
               handleForm(e);
             }}
-            placeholder="Describe Your Collection In Under 200 Chars"
+            placeholder="Describe Your Site In Under 200 Chars"
             className={`w-full h-[80px] bg-zinc-900 rounded-lg p-2 ${
               charExceeded ? "text-red-500" : "text-white"
             } focus:outline-none focus:border-none resize-none`}

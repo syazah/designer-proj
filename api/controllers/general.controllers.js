@@ -61,18 +61,43 @@ export const CreatePanelDetailController = async (req, res, next) => {
     if (!id) {
       return next(errorHandler(400, "Something Went Wrong"));
     }
+    const collection = await Collection.findOne({ _id: collectionId });
+    if (!collection) {
+      return next(errorHandler(400, "Collection Not Found"));
+    }
+    const panelVariant = {
+      panelSize: 2,
+      panelVariant: [],
+      bigPanelVariant: [[], []],
+      panelIcons: {},
+      panelGlass: "#000",
+      panelFrame: "#ddd",
+      panelWall: "",
+      droppableType: 1,
+      droppableColor: "#17c5e2",
+      savedSpaceLeft: 12,
+      savedUpSpace: 6,
+      fanIcon: {
+        id: "FN01",
+        src: "/ICONS/fans/fan1.png",
+      },
+      dimmerIcon: { id: "AB04", src: "/ICONS/alphabets/alphabet-d.png" },
+      extensionTypeOne: "",
+      extensionTypeTwo: "",
+    };
     const panel = new Panel({
       parentCollection: collectionId,
       panelName,
       panelType,
       author: id,
+      panelData: panelVariant,
     });
-    await panel.save();
-
     await Collection.findOneAndUpdate(
       { _id: collectionId },
       { $push: { panels: panel._id } }
     );
+    await panel.save();
+
     await User.findOneAndUpdate(
       { _id: id },
       { $push: { panelsCreated: panel._id } }
@@ -116,13 +141,17 @@ export const SignOutController = async (req, res, next) => {
 //DELETE PANEL CONTROLLER
 export const DeletePanelController = async (req, res, next) => {
   try {
-    const { id, parentId } = req.body;
-    if (!id) {
+    const { id, parentId, collectionID } = req.body;
+    if (!id || !parentId || !collectionID) {
       return next(errorHandler(400, "No Id Found"));
     }
     await User.findOneAndUpdate(
       { _id: parentId },
       { $pull: { panelsCreated: id } }
+    );
+    await Collection.findOneAndUpdate(
+      { _id: collectionID },
+      { $pull: { panels: id } }
     );
     await Panel.findByIdAndDelete(id);
     res.status(200).json({ success: true });

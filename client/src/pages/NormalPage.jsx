@@ -11,7 +11,7 @@ function NormalPage() {
       <div className="flex justify-center items-center p-4 border-b-[2px] border-zinc-900">
         <h1 className="text-5xl font-semibold ">ALL</h1>
       </div>
-      <div className="flex w-full flex-grow">
+      <div className="flex flex-col md:flex-row w-full flex-grow">
         <NormalSidebar />
         <NormalPanelContent />
       </div>

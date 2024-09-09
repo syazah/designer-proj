@@ -56,13 +56,13 @@ function NormalPanelContent() {
               <div
                 key={i}
                 className={
-                  "w-full h-[350px] flex justify-start items-center border-b-[2px] border-zinc-900"
+                  "w-full h-[700px] md:h-[350px] flex flex-col md:flex-row justify-start items-center md:border-b-[2px] md:border-zinc-900"
                 }
               >
                 {NormalPanels.slice(2 * i, 2 * i + 2).map((data, index) => (
                   // PRODUCTS
                   <div
-                    className="w-1/2 h-full border-r-[2px] border-zinc-900 overflow-hidden flex flex-col justify-start items-center"
+                    className="w-full md:w-1/2 h-full border-r-[2px] border-zinc-900 overflow-hidden flex flex-col justify-start items-center border-b-[2px] md:border-b-0"
                     key={`${i}-${index}`}
                   >
                     <div className="w-full h-[250px] flex justify-center items-center cursor-pointer relative overflow-hidden group">

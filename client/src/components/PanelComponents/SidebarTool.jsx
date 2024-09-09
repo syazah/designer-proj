@@ -22,6 +22,7 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
   } = useContext(PanelContext);
 
   const [selectedIcons, setSelectedIcons] = useState(-1);
+  const extensionType = ["pin5Amp10Socket", "usbTypeBC", "pin2Socket"];
 
   return (
     <div className="bg-zinc-950 h-full w-[15%] border-l-[1px] border-zinc-900 overflow-y-scroll">
@@ -108,6 +109,12 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
 
                       if (panelSpecs.panelSize >= 12) {
                         // Determine the new panel variant based on available space
+                        if (
+                          spaceLeft - variants.cost <= 0 &&
+                          upSpace === spaceLeft / 2
+                        ) {
+                          return setCantAddMore(true);
+                        }
                         if (upSpace - variants.cost >= 0) {
                           newPanelVariant = [
                             [
@@ -234,6 +241,14 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
                           ...prevSpecs,
                           bigPanelVariant: newPanelVariant,
                           savedSpaceLeft: spaceLeft - variants.cost,
+                          extensionTypeOne:
+                            panelSpecs.extensionTypeOne != ""
+                              ? panelSpecs.extensionTypeOne
+                              : extensionType[i],
+                          extensionTypeTwo:
+                            panelSpecs.extensionTypeOne != ""
+                              ? extensionType[i]
+                              : panelSpecs.extensionTypeTwo,
                         }));
                         return setSpaceLeft(spaceLeft - variants.cost);
                       } else {
@@ -246,15 +261,33 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
                           ...panelSpecs,
                           panelVariant: newPanelVariant,
                           savedSpaceLeft: spaceLeft - variants.cost,
+                          extensionTypeOne:
+                            panelSpecs.extensionTypeOne != ""
+                              ? panelSpecs.extensionTypeOne
+                              : extensionType[i],
+                          extensionTypeTwo:
+                            panelSpecs.extensionTypeOne != ""
+                              ? extensionType[i]
+                              : panelSpecs.extensionTypeTwo,
                         };
                         setPanelSpecs(newPanelSpecs);
                         return setSpaceLeft(spaceLeft - variants.cost);
                       }
                     }}
                   >
-                    {variants.variant.plugs > 0 && (
+                    {variants.variant.pin5Amp10Socket > 0 && (
                       <h2 className="text-white">
-                        {variants.variant.plugs} Plugs{" "}
+                        {variants.variant.pin5Amp10Socket}-5 Pin 10 Amp Socket{" "}
+                      </h2>
+                    )}
+                    {variants.variant.usbTypeBC > 0 && (
+                      <h2 className="text-white">
+                        {variants.variant.usbTypeBC}-USB Type B & C{" "}
+                      </h2>
+                    )}
+                    {variants.variant.pin2Socket > 0 && (
+                      <h2 className="text-white">
+                        {variants.variant.pin2Socket}-2 Pin Socket{" "}
                       </h2>
                     )}
                   </div>
@@ -270,15 +303,16 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
           return (
             <div
               onClick={() => {
-                setPanelSpecs({ ...panelSpecs, panelGlass: glass });
+                setPanelSpecs({ ...panelSpecs, panelGlass: glass.color });
               }}
               key={index}
-              className="flex flex-col border-b-[1px] border-zinc-800 bg-red-600 cursor-pointer transition-all duration-200 p-2 justify-center items-center hover:bg-red-500"
+              className="w-full h-[100px] flex flex-col border-b-[1px] border-zinc-800 bg-red-600 cursor-pointer transition-all duration-200 justify-center items-center hover:bg-red-500 mb-1"
             >
               <div
-                className="w-[64px] h-[64px] rounded-full"
-                style={{ backgroundColor: glass }}
+                className="w-full h-full"
+                style={{ backgroundColor: glass.color }}
               ></div>
+              <h2 className="font-normal">{glass.name}</h2>
             </div>
           );
         })}
@@ -289,15 +323,16 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
           return (
             <div
               onClick={() => {
-                setPanelSpecs({ ...panelSpecs, panelFrame: frame });
+                setPanelSpecs({ ...panelSpecs, panelFrame: frame.color });
               }}
               key={index}
-              className="flex flex-col border-b-[1px] border-zinc-800 bg-red-600 cursor-pointer transition-all duration-200 p-2 justify-center items-center hover:bg-red-500"
+              className="w-full h-[100px] flex flex-col border-b-[1px] border-zinc-800 bg-red-600 cursor-pointer transition-all duration-200 justify-center items-center hover:bg-red-500 mb-1"
             >
               <div
-                className="w-[64px] h-[64px] rounded-full"
-                style={{ backgroundColor: frame }}
+                className="w-full h-full"
+                style={{ backgroundColor: frame.color }}
               ></div>
+              <h2 className="font-normal">{frame.name}</h2>
             </div>
           );
         })}

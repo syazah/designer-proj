@@ -9,6 +9,7 @@ import {
   SearchUserController,
   SearchBusinessController,
   AddNormalPanelController,
+  GetBusinessDetailController,
 } from "../controllers/admin.controllers.js";
 
 const routes = express.Router();
@@ -16,6 +17,7 @@ const routes = express.Router();
 routes.post("/signup", AdminSignUpController);
 routes.post("/send-details", AdminSendDetailsController);
 routes.post("/user-detail-complete", GetUserDetailController);
+routes.post("/business-detail-complete", GetBusinessDetailController);
 routes.post("/delete-user", DeleteUserController);
 routes.post("/normal-panel", AddNormalPanelController);
 routes.get("/search", SearchUserController);

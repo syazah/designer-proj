@@ -1,8 +1,36 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { PanelContext } from "../../context/PanelContextProvider";
+import { useDrop } from "react-dnd";
+import { PanelIcons } from "../../../data/PanelSpecs";
 
-function DimmerVariant() {
-  const { panelSpecs } = useContext(PanelContext);
+function DimmerVariant({ normalPanel, dimmerIcon }) {
+  const { panelSpecs, setPanelSpecs } = useContext(PanelContext);
+  const [imageDetail, setImageDetail] = useState({
+    id: "FN01",
+    src: "/ICONS/fans/fan1.png",
+  });
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: "image",
+    drop: (item) => {
+      showImageLogic(item.id, item.mainId);
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  }));
+  function showImageLogic(id, mainId) {
+    const imageData = PanelIcons[mainId].filter((img) => img.id === id);
+    if (imageData) {
+      setPanelSpecs((prevSpecs) => ({
+        ...prevSpecs,
+        dimmerIcon: imageData[0],
+      }));
+      setImageDetail(imageData[0]);
+    } else {
+      alert("Image or dropId not found:");
+    }
+  }
+
   return (
     <div className=" w-[158px] h-[158px] flex overflow-hidden justify-between px-2">
       <div className="fan-indicators flex flex-col gap-[12px] justify-center items-center">
@@ -13,6 +41,39 @@ function DimmerVariant() {
             className="w-[10px] h-[10px] rounded-full"
           ></div>
         ))}
+      </div>
+      <div className="fan-indicators flex flex-col justify-center items-end w-[74px]">
+        {normalPanel ? (
+          <div
+            style={{ borderColor: panelSpecs.droppableColor }}
+            className={`w-[50px] h-[50px] border-[4px] transition-all duration-200 cursor-pointer rounded-full p-1 flex justify-center items-center`}
+          >
+            <div
+              style={{ backgroundColor: panelSpecs.droppableColor }}
+              className="w-[15px] h-[15px]"
+            ></div>
+          </div>
+        ) : (
+          <div
+            style={
+              isOver
+                ? { borderColor: "green" }
+                : { borderColor: panelSpecs.droppableColor }
+            }
+            ref={drop}
+            className={`w-[50px] h-[50px] border-[2px] transition-all duration-200 cursor-pointer rounded-full  ${
+              panelSpecs.droppableType === "0" ? "rounded-full" : ""
+            } p-1`}
+          >
+            {dimmerIcon != null && (
+              <img
+                className="w-full h-full object-contain"
+                src={dimmerIcon?.src}
+              />
+            )}
+          </div>
+        )}
+        {/* <img className="w-full" src="/ICONS/fans/fan1.png" /> */}
       </div>
       <div className="w-[74px] flex flex-col items-center gap-[40px] justify-center">
         <div

@@ -121,6 +121,8 @@ function UserDetail() {
                             panelGlass={panel.panelData.panelGlass}
                             panelFrame={panel.panelData.panelFrame}
                             panelVariant={panel.panelData.panelVariant}
+                            fanIcon={panel.panelData.fanIcon}
+                            dimmerIcon={panel.panelData.dimmerIcon}
                             panelIcons={Object.entries(
                               panel.panelData?.panelIcons || {}
                             )}
@@ -132,6 +134,8 @@ function UserDetail() {
                             panelGlass={panel.panelData.panelGlass}
                             panelFrame={panel.panelData.panelFrame}
                             panelVariant={panel.panelData.bigPanelVariant}
+                            fanIcon={panel.panelData.fanIcon}
+                            dimmerIcon={panel.panelData.dimmerIcon}
                             panelIcons={Object.entries(
                               panel.panelData?.panelIcons || {}
                             )}

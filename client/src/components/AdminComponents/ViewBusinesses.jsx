@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Loading from "../Loading";
+import { Link } from "react-router-dom";
 
 function ViewBusinesses() {
   const [allUsers, setAllUsers] = useState([]);
@@ -68,7 +69,7 @@ function ViewBusinesses() {
       {/* SEARCH BAR */}
       <div className="w-full p-2 px-4 flex justify-between items-center bg-zinc-900">
         <h1 className="text-xl font-semibold text-white border-b-2 border-red-600">
-          View Users
+          View Businesses
         </h1>
         <div className="w-1/4 bg-zinc-800 p-2 flex justify-start items-center">
           <input
@@ -130,6 +131,27 @@ function ViewBusinesses() {
                     </h1>
                   </div>
                 </div>
+                <div className="flex gap-2">
+                  <Link
+                    to={`/admin/detail/business/${users._id}`}
+                    className=" flex justify-center items-center bg-red-600 p-2 hover:bg-red-800 rounded-full cursor-pointer"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="size-8"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                      />
+                    </svg>
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
@@ -188,7 +210,10 @@ function ViewBusinesses() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <div className=" flex justify-center items-center bg-red-600 p-2 hover:bg-red-800 rounded-full cursor-pointer">
+                  <Link
+                    to={`/admin/detail/business/${users._id}`}
+                    className=" flex justify-center items-center bg-red-600 p-2 hover:bg-red-800 rounded-full cursor-pointer"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -203,7 +228,7 @@ function ViewBusinesses() {
                         d="m8.25 4.5 7.5 7.5-7.5 7.5"
                       />
                     </svg>
-                  </div>
+                  </Link>
                 </div>
               </div>
             ))}

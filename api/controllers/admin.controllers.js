@@ -17,9 +17,6 @@ const transporter = nodemailer.createTransport({
     user: process.env.AUTH_MAIL,
     pass: process.env.APP_PASSWORD,
   },
-  tls: {
-    rejectUnauthorized: false, // Accept self-signed certificates
-  },
 });
 
 // SIGN UP
@@ -123,7 +120,6 @@ export const GetAllUsersController = async (req, res, next) => {
       .limit(dataLimit);
     res.status(200).json({ success: true, user, numDoc });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -141,7 +137,6 @@ export const GetAllBusinessesController = async (req, res, next) => {
       .limit(dataLimit);
     res.status(200).json({ success: true, user, numDoc });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -237,5 +232,25 @@ export const AddNormalPanelController = async (req, res, next) => {
     res.status(200).json({ success: true });
   } catch (error) {
     next(error);
+  }
+};
+
+//GET BUSINESS CONTROLLER
+export const GetBusinessDetailController = async (req, res, next) => {
+  try {
+    const { id } = req.body;
+    if (!id) {
+      return next(errorHandler(400, "User Details Not Found"));
+    }
+    const data = await Business.findOne({ _id: id }).populate({
+      path: "clientsCreated",
+    });
+
+    // if (!data) {
+    //   return next(errorHandler(400, "User Details Not Found"));
+    // }
+    res.status(200).json({ success: true, data });
+  } catch (error) {
+    next(errorHandler(error));
   }
 };

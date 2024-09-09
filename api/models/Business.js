@@ -44,7 +44,7 @@ const BusinessSchema = new mongoose.Schema(
     },
     clientsCreated: {
       type: [mongoose.Schema.Types.ObjectId],
-      ref: "panel",
+      ref: "User",
     },
     orderRaised: {
       type: Boolean,

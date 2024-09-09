@@ -35,8 +35,16 @@ const ViewBusinesses = lazy(() =>
 const UserDetail = lazy(() =>
   import("./components/AdminComponents/UserDetail")
 );
+const BusinessDetail = lazy(() =>
+  import("./components/AdminComponents/BusinessDetail")
+);
+const ViewUsersBusiness = lazy(() =>
+  import("./components/BusinessComponents/ViewUsersBusiness")
+);
+const SmallScreenComponent = lazy(() => import("./pages/SmallScreenComponent"));
 const SignIn = lazy(() => import("./pages/SignInPage"));
 function App() {
+  const width = window.innerWidth;
   const { userType, user } = useContext(UserAuthContext);
   return (
     <Suspense fallback={<Loading />}>
@@ -59,6 +67,7 @@ function App() {
               <Route path="view/users" element={<ViewUsers />} />
               <Route path="view/businesses" element={<ViewBusinesses />} />
               <Route path="detail/user/:id" element={<UserDetail />} />
+              <Route path="detail/business/:id" element={<BusinessDetail />} />
             </Route>
             <Route
               path="/business"
@@ -66,17 +75,45 @@ function App() {
             >
               <Route index element={<MainBusiness />} />
               <Route path="signup/client" element={<ClientSignUp />} />
+              <Route path="view/users" element={<ViewUsersBusiness />} />
+              <Route path="detail/user/:id" element={<UserDetail />} />
             </Route>
             <Route
               path="/collection/:id"
-              element={user !== null ? <CollectionPage /> : <ErrorPage />}
+              element={
+                user !== null ? (
+                  width < 750 ? (
+                    <SmallScreenComponent />
+                  ) : (
+                    <CollectionPage />
+                  )
+                ) : (
+                  <ErrorPage />
+                )
+              }
             />
             <Route
               path="/panel/:id"
-              element={user !== null ? <PanelPage /> : <ErrorPage />}
+              element={
+                user !== null ? (
+                  width < 750 ? (
+                    <SmallScreenComponent />
+                  ) : (
+                    <PanelPage />
+                  )
+                ) : (
+                  <ErrorPage />
+                )
+              }
             />
-            <Route path="/normal-panels" element={<NormalPage />} />
-            <Route path="/normal-panels/:id" element={<ViewNormalPanel />} />
+            <Route
+              path="/normal-panels"
+              element={user !== null ? <NormalPage /> : <ErrorPage />}
+            />
+            <Route
+              path="/normal-panels/:id"
+              element={user !== null ? <ViewNormalPanel /> : <ErrorPage />}
+            />
           </Routes>
         </BrowserRouter>
       </DndProvider>

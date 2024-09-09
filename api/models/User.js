@@ -43,7 +43,7 @@ const UserSchema = new mongoose.Schema(
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
-      refPath: "createdByModel"
+      refPath: "createdByModel",
     },
     createdByModel: {
       type: String,
@@ -56,7 +56,7 @@ const UserSchema = new mongoose.Schema(
     },
     ordersRaised: {
       type: [mongoose.Schema.Types.ObjectId],
-      ref: "Panel",
+      ref: "Order",
     },
     collectionsCreated: {
       type: [mongoose.Schema.Types.ObjectId],

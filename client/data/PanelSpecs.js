@@ -124,13 +124,33 @@ export const PanelExtensions = [
     {
       cost: 2,
       variant: {
-        plugs: 1,
+        pin5Amp10Socket: 1,
+      },
+    },
+    {
+      cost: 2,
+      variant: {
+        usbTypeBC: 1,
+      },
+    },
+    {
+      cost: 2,
+      variant: {
+        pin2Socket: 1,
       },
     },
   ],
 ];
-export const PanelGlass = ["#000", "#36454F", "#ab936b"];
-export const PanelFrame = ["#000", "#36454F", "#eee", "#ab936b"];
+export const PanelGlass = [
+  { color: "#000", name: "Royal Black" },
+  { color: "#535150", name: "Charcoal Gray" },
+  { color: "#ab936b", name: "Champaign Gold" },
+];
+export const PanelFrame = [
+  { color: "#000", name: "Matt Black" },
+  { color: "#b5b6b5", name: "Nickel Chrome" },
+  { color: "#ab936b", name: "Gold" },
+];
 export const PanelIcons = [
   // ALPHABETS
   [

@@ -14,11 +14,19 @@ function PanelContextProvider({ children }) {
     droppableColor: "#17c5e2",
     savedSpaceLeft: 12,
     savedUpSpace: 6,
+    fanIcon: {
+      id: "FN01",
+      src: "/ICONS/fans/fan1.png",
+    },
+    dimmerIcon: { id: "AB04", src: "/ICONS/alphabets/alphabet-d.png" },
+    extensionTypeOne: "",
+    extensionTypeTwo: "",
   });
   const [spaceLeft, setSpaceLeft] = useState(panelSpecs.panelSize);
   const [panelCollectionContext, setPanelCollectionContext] = useState(null);
   const [initialSignIn, setInitialSignIn] = useState(false);
   const [upSpace, setUpSpace] = useState(6);
+  const [currentCollectionId, setCurrentCollectionId] = useState("");
 
   useEffect(() => {
     if (panelSpecs.panelSize) {
@@ -36,6 +44,8 @@ function PanelContextProvider({ children }) {
         setPanelCollectionContext,
         initialSignIn,
         setInitialSignIn,
+        currentCollectionId,
+        setCurrentCollectionId,
         upSpace,
         setUpSpace,
       }}

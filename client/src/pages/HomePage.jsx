@@ -25,14 +25,11 @@ function HomePage() {
     }
   }
   return (
-    <div className="w-full h-[100vh] bg-zinc-800 flex flex-col relative">
+    <div className="w-full min-h-[100vh] md:h-[100vh] overflow-hidden bg-zinc-800 flex flex-col relative">
       {/* NAVBAR  */}
-      <div className="w-full flex justify-between items-center p-2 shadow-xl">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-wider text-white"></h1>
-        </div>
+      <div className="w-full flex justify-end items-center p-2 shadow-xl">
         <div className="flex justify-center gap-4">
-          <Link className="h-[40px] px-5 bg-red-600 rounded-full text-base flex justify-center items-center">
+          <Link className="h-[30px] md:h-[40px] px-2 md:px-5 bg-red-600 rounded-full text-xs md:text-base flex justify-center items-center">
             Contact Us
           </Link>
           {user && userType === 5 && (
@@ -54,7 +51,7 @@ function HomePage() {
           {user && (
             <button
               onClick={handleSignOut}
-              className="bg-red-600 rounded-full text-base flex justify-center items-center hover:bg-red-800 transition-all duration-300 group overflow-hidden p-2"
+              className="bg-red-600 rounded-full text-base flex justify-center items-center hover:bg-red-800 transition-all duration-300 group overflow-hidden p-1 md:p-2"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -90,15 +87,15 @@ function HomePage() {
 function NegativeAuthContent({ user, userType }) {
   return (
     <div className="grid grid-rows-10 grid-cols-10 relative w-full h-full p-8 gap-4 mt-4">
-      <div className="row-start-4 col-start-1 w-[0px] h-[0px] rounded-full shadow-[0px_0px_200px_60px_#00c2cb] bg-[#00c2cb]"></div>
-      <div className="row-start-6 col-start-11 w-[0px] h-[0px] rounded-full shadow-[0px_0px_200px_60px_#FF3131] bg-[#FF3131]"></div>
-      <div className="absolute top-0 left-0 w-full flex flex-col p-8 justify-start items-center gap-4 mt-4">
-        <h3 className="text-2xl font-medium text-gray-400">
+      <div className="hidden md:flex md:row-start-4 md:col-start-1 md:w-[0px] md:h-[0px] md:rounded-full md:shadow-[0px_0px_200px_60px_#00c2cb] md:bg-[#00c2cb]"></div>
+      <div className="hidden md:flex row-start-6 col-start-11 w-[0px] h-[0px] rounded-full shadow-[0px_0px_200px_60px_#FF3131] bg-[#FF3131]"></div>
+      <div className="absolute top-0 left-0 w-full h-full flex flex-col p-4 md:p-8 justify-start items-center gap-4 mt-4">
+        <h3 className=" text-sm text-center md:text-2xl font-medium text-gray-400">
           {!user
             ? "Transform Your Home into a Smart Heaven"
             : `Hello ${user.name} 👋`}
         </h3>
-        <h1 className="text-6xl font-semibold text-gray-100 text-center">
+        <h1 className="text-2xl md:text-6xl font-semibold text-gray-100 text-center">
           {!user
             ? "Create and Customize Smart Home Panels with Ease"
             : userType === 6
@@ -107,16 +104,16 @@ function NegativeAuthContent({ user, userType }) {
             ? "Panels For Businesses, Create Clients And Grow"
             : "Continue Customizing or Explore New Predefined Panels"}
         </h1>
-        <p className="text-gray-400 text-xl text-center px-28">
+        <p className="text-gray-400 text-sm md:text-xl text-center px-4 md:px-28">
           {!user
             ? "Welcome to our platform, where you can design your own custom smart panels or choose from our curated selection. Sign In now to start transforming your home into a smart heaven with personalized control and automation solutions."
             : "You're just a few steps away from perfecting your smart home setup. Dive back into your projects to tweak your custom panels or discover new predesigned options that add convenience and efficiency to your home environment. Your personalized smart home experience awaits!"}
         </p>
-        <div className="flex mt-4 gap-6">
+        <div className="flex md:mt-4 gap-6">
           {!user ? (
             <Link
               to={"/signin"}
-              className="bg-red-600 p-4 rounded-full font-semibold text-white text-lg flex justify-center items-center gap-2 hover:bg-red-800 transition-all duration-300"
+              className="bg-red-600 p-2 md:p-4 rounded-full font-semibold text-white text-lg flex justify-center items-center gap-2 hover:bg-red-800 transition-all duration-300"
             >
               Sign In
               <svg
@@ -138,12 +135,12 @@ function NegativeAuthContent({ user, userType }) {
             <>
               <Link
                 to={"/normal-panels"}
-                className="bg-red-600 p-4 rounded-full font-semibold text-white text-lg flex justify-center items-center hover:bg-red-800 transition-all duration-300"
+                className="bg-red-600 p-2 md:p-4 rounded-full font-semibold text-white text-lg flex justify-center items-center hover:bg-red-800 transition-all duration-300"
               >
                 Normal Panels
               </Link>
               <Link
-                className="border-2 border-red-600 p-4 rounded-full font-semibold flex justify-center items-center text-white text-lg hover:bg-red-600 transition-all duration-300"
+                className="border-2 border-red-600 p-2 md:p-4 rounded-full font-semibold flex justify-center items-center text-white text-lg hover:bg-red-600 transition-all duration-300"
                 to={"/customise"}
               >
                 Custom Panels

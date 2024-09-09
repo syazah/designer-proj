@@ -11,9 +11,9 @@ function ViewNormalPanel() {
   const [panelGlassColor, setPanelGlassColor] = useState("");
   const [panelFrameColor, setPanelFrameColor] = useState("");
   const [collectionValue, setCollectionValue] = useState("");
+  const width = window.innerWidth;
 
   const [addCollectionLoading, setAddCollectionLoading] = useState(false);
-  console.log(panelInfo);
 
   async function GETPanel() {
     try {
@@ -85,14 +85,14 @@ function ViewNormalPanel() {
               {panelInfo.size} Module Standard Panel
             </h1>
           </div>
-          <div className="flex w-full h-full">
+          <div className="flex flex-col md:flex-row w-full h-full">
             <div
               style={{ backgroundColor: panelBackgroundColor }}
-              className="w-[85%] h-full border-r-[2px] border-zinc-900 flex justify-center items-center"
+              className="w-full md:border-r-[2px] border-zinc-900 flex flex-col justify-start items-center scale-75 md:scale-100 md:flex-row  md:justify-center md:items-center"
             >
               <Panel
                 normalPanel={true}
-                normalPanelRegSize={true}
+                normalPanelRegSize={width > 750 ? true : false}
                 panelSize={panelInfo.size}
                 panelFrame={
                   panelFrameColor === "" ? panelInfo.frame : panelFrameColor
@@ -105,7 +105,7 @@ function ViewNormalPanel() {
               />
             </div>
 
-            <div className="flex w-[15%] flex-col justify-start items-start p-2 gap-3">
+            <div className="flex w-full md:w-[15%] flex-col justify-start items-start p-2 gap-3">
               <div className="flex flex-col gap-1">
                 <h2 className="text-sm">Select Background</h2>
                 <div className="flex flex-wrap gap-2">

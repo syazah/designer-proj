@@ -1,5 +1,6 @@
 import errorHandler from "../utils/errorHandler.js";
 import { Business } from "../models/Business.js";
+import { User } from "../models/User.js";
 import { Verification } from "../models/Verification.js";
 import bcryptjs from "bcryptjs";
 import validator from "validator";
@@ -17,9 +18,6 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.AUTH_MAIL,
     pass: process.env.APP_PASSWORD,
-  },
-  tls: {
-    rejectUnauthorized: false, // Accept self-signed certificates
   },
 });
 
@@ -178,5 +176,28 @@ export const BusinessSignInController = async (req, res, next) => {
       .json({ success: true, userData });
   } catch (error) {
     next(error);
+  }
+};
+
+//! VIEW USERS BUSINESS
+export const BusinessViewUsersController = async (req, res, next) => {
+  try {
+    const { businessID } = req.body;
+    const data = await User.find({ createdBy: businessID }).select(
+      "_id username email name"
+    );
+    if (!data) {
+      return next(errorHandler(400, "No Data Found"));
+    }
+    res.status(200).json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const BusinessUserSearchController = async (req, res, next) => {
+  try {
+  } catch (error) {
+    return next(error);
   }
 };

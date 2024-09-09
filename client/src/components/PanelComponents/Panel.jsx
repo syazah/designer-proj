@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import DroppableCollection from "./DroppableCollection";
 import CurtainVariant from "../VariantComponent/CurtainVariant";
 import FansVariant from "../VariantComponent/FansVariant";
 import PlugVariant from "../VariantComponent/PlugVariant";
 import DimmerVariant from "../VariantComponent/DimmerVariant";
+import { PanelContext } from "../../context/PanelContextProvider";
 function Panel({
   spaceLeft,
   normalPanel = false,
@@ -11,6 +12,8 @@ function Panel({
   panelGlass,
   panelFrame,
   panelVariant,
+  fanIcon,
+  dimmerIcon,
   normalPanelRegSize = false,
   panelIcons = [],
 }) {
@@ -30,7 +33,7 @@ function Panel({
     panelHeight = "300px";
   }
   // PANEL
-
+  const { panelSpecs } = useContext(PanelContext);
   return (
     <div
       style={{
@@ -67,11 +70,16 @@ function Panel({
               </React.Fragment>
             )}
 
-          {panelVariant.filter((el) => el === "ext").length >= 2 && (
+          {panelVariant.filter((el) => el === "ext").length >= 1 && (
             <React.Fragment>
               <div className="flex items-center gap-[20px]">
                 {Array.from({ length: 1 }, (_, i) => {
-                  return <PlugVariant key={`plug-${i}`} />;
+                  return (
+                    <PlugVariant
+                      iconType={panelSpecs.extensionTypeOne}
+                      key={`plug-${i}`}
+                    />
+                  );
                 })}
               </div>
             </React.Fragment>
@@ -133,14 +141,21 @@ function Panel({
                 {variant.fans > 0 && (
                   <div className="flex items-center gap-[20px]">
                     {Array.from({ length: variant.fans }, (_, i) => {
-                      return <FansVariant key={`fans-${i}`} />;
+                      return (
+                        <FansVariant fanIcon={fanIcon} key={`fans-${i}`} />
+                      );
                     })}
                   </div>
                 )}
                 {variant.dimmers > 0 && (
                   <div className="flex items-center gap-[20px]">
                     {Array.from({ length: variant.dimmers }, (_, i) => {
-                      return <DimmerVariant key={`0-dimmers-${i}`} />;
+                      return (
+                        <DimmerVariant
+                          dimmerIcon={dimmerIcon}
+                          key={`0-dimmers-${i}`}
+                        />
+                      );
                     })}
                   </div>
                 )}
@@ -162,11 +177,16 @@ function Panel({
           )}
 
           {/* EXTENSIONS  */}
-          {panelVariant.filter((el) => el === "ext").length >= 1 && (
+          {panelVariant.filter((el) => el === "ext").length >= 2 && (
             <React.Fragment>
               <div className="flex items-center gap-[20px]">
                 {Array.from({ length: 1 }, (_, i) => {
-                  return <PlugVariant key={`plug-${i}`} />;
+                  return (
+                    <PlugVariant
+                      iconType={panelSpecs.extensionTypeTwo}
+                      key={`plug-${i}`}
+                    />
+                  );
                 })}
               </div>
             </React.Fragment>

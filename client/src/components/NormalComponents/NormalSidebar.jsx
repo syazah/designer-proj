@@ -4,7 +4,7 @@ import { NormalContext } from "../../context/NormalContextProvider";
 function NormalSidebar() {
   const { normalFilter, setNormalFilter } = useContext(NormalContext);
   return (
-    <div className="w-[15%] flex-grow border-r-[2px] border-zinc-900 flex flex-col p-2">
+    <div className="w-full md:w-[15%] flex-grow border-r-[2px] border-zinc-900 flex flex-col p-2">
       <div className="flex flex-col gap-2 justify-start border-b-[2px] border-zinc-900 pb-2 ">
         <h1 className="text-xl font-semibold">Filter BY</h1>
         <div className="w-full flex flex-col justify-start items-start gap-1">
@@ -45,7 +45,7 @@ function NormalSidebar() {
       {/* normalFilterS  */}
       <div className=" justify-start border-b-[2px] border-zinc-900 mt-4 pb-4">
         <h1 className="text-xl font-semibold">MODULE SIZE</h1>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col  gap-2">
           {[2, 4, 6, 8, 12].map((size, i) => (
             <div key={i} className="flex justify-start items-center gap-2">
               <div

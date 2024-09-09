@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Panel from "../PanelComponents/Panel";
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserAuthContext } from "../../context/UserAuthProvider";
@@ -12,41 +12,68 @@ function CollectionPanels({ panels, setAddPanelPopup, normalPanels }) {
   useEffect(() => {
     setPanelCollectionContext(collectionRef);
   }, [collectionRef, setPanelCollectionContext]);
+
   return (
     <div className="w-full min-h-[200px] flex flex-col justify-start overflow-hidden">
       {/* ADD PANEL BUTTON  */}
-      <div className=" w-full flex justify-end items-center cursor-pointer">
-        <div
-          onClick={() => setAddPanelPopup(true)}
-          className="flex group justify-center items-center p-2 bg-red-600 transition-all duration-300"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="white"
-            className="size-8"
+      {panels.length === 0 || (
+        <div className=" w-full flex justify-end items-center cursor-pointer">
+          <div
+            onClick={() => setAddPanelPopup(true)}
+            className="flex group justify-center items-center p-2 bg-red-600 transition-all duration-300"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
-          </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="white"
+              className="size-8"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              />
+            </svg>
 
-          <h2 className="max-w-0 max-h-0 opacity-0 group-hover:max-w-xs group-hover:max-h-10 group-hover:opacity-100 transition-all duration-300 overflow-hidden text-white">
-            Add Panel
-          </h2>
+            <h2 className="max-w-xs transition-all duration-300 overflow-hidden text-white">
+              Add Panel
+            </h2>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* PANEL  */}
 
       {panels.length === 0 && normalPanels.length === 0 ? (
-        <h1 className="text-xl text-red-600">
-          *No Panels To Show Kindly Refresh Or Add A New Panel{" "}
-        </h1>
+        <div className="w-full h-full">
+          <h1 className="text-xl text-red-600">
+            *No Panels To Show Kindly Refresh Or Add A New Panel{" "}
+          </h1>
+          <div className="w-full h-full flex justify-center items-center">
+            <button
+              onClick={() => setAddPanelPopup(true)}
+              className="p-2 px-4 bg-red-600 flex justify-center items-center text-white font-medium text-lg gap-2 rounded-full mt-10 hover:bg-red-800"
+            >
+              Create A New Panel{" "}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="white"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4.5v15m7.5-7.5h-15"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
       ) : (
         <>
           <h1 className="text-2xl font-semibold text-white">CUSTOM PANELS</h1>
@@ -81,9 +108,11 @@ function CollectionPanels({ panels, setAddPanelPopup, normalPanels }) {
 
 function AvailablePanel({ panel }) {
   const { user } = useContext(UserAuthContext);
+  console.log(panel);
   const panelRef = useRef(null);
   const downloadOptionRef = useRef(null);
   const [downloadOptionShowing, setDownloadOptionShowing] = useState(false);
+  const { id: collectionID } = useParams();
   function getDownloadOption() {
     if (!downloadOptionShowing) {
       downloadOptionRef.current.style.transform = "translateY(0px)";
@@ -101,7 +130,11 @@ function AvailablePanel({ panel }) {
       const res = await fetch(`/api/v1/general/delete-panel`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: panel._id, parentId: user._id }),
+        body: JSON.stringify({
+          id: panel._id,
+          parentId: user._id,
+          collectionID,
+        }),
       });
       const data = await res.json();
       if (res.ok && data.success === true) {
@@ -112,32 +145,35 @@ function AvailablePanel({ panel }) {
       alert("Error");
     }
   }
-  console.log(panel.panelData);
   return (
     <div className="bg-zinc-950 rounded-xl flex flex-col overflow-hidden relative">
       <div
         ref={panelRef}
-        style={{ backgroundColor: panel.panelData?.panelWall ?? "#000" }}
+        style={{ backgroundColor: panel?.panelData?.panelWall ?? "#000" }}
         className={`available-panel flex justify-center items-center w-full ${
-          panel.panelData.panelSize < 12 ? "h-[400px]" : "h-[500px]"
+          panel?.panelData?.panelSize < 12 ? "h-[400px]" : "h-[500px]"
         }`}
       >
         {panel?.panelData != null && panel?.panelData.panelSize < 12 ? (
           <Panel
-            spaceLeft={panel.panelData.savedSpaceLeft}
-            panelSize={panel.panelData.panelSize}
-            panelGlass={panel.panelData.panelGlass}
-            panelFrame={panel.panelData.panelFrame}
-            panelVariant={panel.panelData.panelVariant}
-            panelIcons={Object.entries(panel.panelData?.panelIcons || {})}
+            spaceLeft={panel?.panelData.savedSpaceLeft}
+            panelSize={panel?.panelData.panelSize}
+            panelGlass={panel?.panelData.panelGlass}
+            panelFrame={panel?.panelData.panelFrame}
+            panelVariant={panel?.panelData.panelVariant}
+            fanIcon={panel?.panelData.fanIcon}
+            panelIcons={Object.entries(panel?.panelData?.panelIcons || {})}
+            dimmerIcon={panel?.panelData.dimmerIcon}
           />
         ) : (
           <BigPanel
-            upSpace={panel.panelData.savedUpSpace}
-            spaceLeft={panel.panelData.savedSpaceLeft}
-            panelGlass={panel.panelData.panelGlass}
-            panelFrame={panel.panelData.panelFrame}
-            panelVariant={panel.panelData.bigPanelVariant}
+            upSpace={panel?.panelData.savedUpSpace}
+            spaceLeft={panel?.panelData.savedSpaceLeft}
+            panelGlass={panel?.panelData.panelGlass}
+            panelFrame={panel?.panelData.panelFrame}
+            panelVariant={panel?.panelData.bigPanelVariant}
+            fanIcon={panel?.panelData.fanIcon}
+            dimmerIcon={panel?.panelData.dimmerIcon}
             panelIcons={Object.entries(panel.panelData?.panelIcons || {})}
           />
         )}

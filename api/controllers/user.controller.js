@@ -12,6 +12,8 @@ import nodemailer from "nodemailer";
 import { Panel } from "../models/Panel.js";
 import { Business } from "../models/Business.js";
 import { NormalPanel } from "../models/NormalPanel.js";
+import { v2 as cloudinary } from "cloudinary";
+import { Order } from "../models/Order.js";
 dotenv.config();
 
 const canCreate = [100, 10, 25];
@@ -28,7 +30,6 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false, // Accept self-signed certificates
   },
 });
-
 // USER SIGN UP
 export const UserSignUpController = async (req, res, next) => {
   try {
@@ -199,7 +200,6 @@ export const UserSignInController = async (req, res, next) => {
     if (!user) {
       return next(errorHandler(400, "User not found"));
     }
-
     // Check password
     const isPasswordCorrect = bcryptjs.compareSync(password, user.password);
     if (!isPasswordCorrect) {
@@ -226,7 +226,7 @@ export const UserSignInController = async (req, res, next) => {
 export const CreateCollectionController = async (req, res, next) => {
   try {
     const { _id, name, description } = req.body;
-    if (!_id || !name || !description) {
+    if (!_id || !name) {
       return next(errorHandler(400, "All Fields Are Required"));
     }
     const newCollection = new Collection({
@@ -342,6 +342,76 @@ export const AddNormalPanelCollection = async (req, res, next) => {
     );
 
     res.status(200).json({ success: true });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+// HANDLE RAISE ORDER
+
+//CLOUDINARY CONFIG
+cloudinary.config({
+  cloud_name: "dkmfel0qk",
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET, // Click 'View API Keys' above to copy your API secret
+});
+export const UploadOrderController = async (req, res, next) => {
+  try {
+    const file = req.file;
+    const { id } = req.params;
+    const { filename, path } = file;
+    console.log(id);
+    const uploadURL = await cloudinary.uploader.upload(path, {
+      public_id: id + filename,
+    });
+    res.status(200).json({ success: true, uploadURL });
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
+};
+export const HandleRaiseOrderController = async (req, res, next) => {
+  try {
+    const { panels, userID } = req.body;
+    if (!panels || panels.length === 0 || !userID) {
+      return next(errorHandler(400, "Data Is Needed to raise order"));
+    }
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let referenceNumber = "";
+
+    for (let i = 0; i < 8; i++) {
+      const randomIndex = Math.floor(Math.random() * chars.length);
+      referenceNumber += chars[randomIndex];
+    }
+    const orderData = new Order({
+      raisedBy: userID,
+      panelData: panels,
+      referenceNumber,
+    });
+    await orderData.save();
+    await User.findOneAndUpdate(
+      { _id: userID },
+      { $addToSet: { ordersRaised: orderData._id } }
+    );
+    res.status(200).json({ success: true, referenceNumber });
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
+};
+
+export const GetOrderHistoryController = async (req, res, next) => {
+  try {
+    const { userID } = req.body;
+    if (!userID) return next(errorHandler(400, "User Not Found"));
+    const user = await User.findOne({ _id: userID }).populate({
+      path: "ordersRaised",
+    });
+    if (!user)
+      return next(
+        errorHandler(400, "Something went wrong, Could Not Find User data")
+      );
+    res.status(200).json({ success: true, data: user.ordersRaised });
   } catch (error) {
     return next(error);
   }

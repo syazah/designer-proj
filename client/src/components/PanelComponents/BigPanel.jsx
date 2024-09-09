@@ -2,8 +2,9 @@ import DroppableCollection from "./DroppableCollection";
 import CurtainVariant from "../VariantComponent/CurtainVariant";
 import FansVariant from "../VariantComponent/FansVariant";
 import PlugVariant from "../VariantComponent/PlugVariant";
-import React from "react";
+import React, { useContext } from "react";
 import DimmerVariant from "../VariantComponent/DimmerVariant";
+import { PanelContext } from "../../context/PanelContextProvider";
 function BigPanel({
   upSpace,
   spaceLeft,
@@ -11,10 +12,11 @@ function BigPanel({
   panelGlass,
   panelFrame,
   panelVariant,
+  fanIcon,
+  dimmerIcon,
   panelIcons = [],
 }) {
-  console.log(upSpace);
-  console.log(spaceLeft);
+  const { panelSpecs } = useContext(PanelContext);
   // PANEL
   return (
     <div
@@ -106,14 +108,21 @@ function BigPanel({
                   {variant.fans > 0 && (
                     <div className="flex items-center gap-[20px]">
                       {Array.from({ length: variant.fans }, (_, i) => {
-                        return <FansVariant key={`0-fans-${i}`} />;
+                        return (
+                          <FansVariant fanIcon={fanIcon} key={`0-fans-${i}`} />
+                        );
                       })}
                     </div>
                   )}
                   {variant.dimmers > 0 && (
                     <div className="flex items-center gap-[20px]">
                       {Array.from({ length: variant.dimmers }, (_, i) => {
-                        return <DimmerVariant key={`0-dimmers-${i}`} />;
+                        return (
+                          <DimmerVariant
+                            dimmerIcon={dimmerIcon}
+                            key={`0-dimmers-${i}`}
+                          />
+                        );
                       })}
                     </div>
                   )}
@@ -137,7 +146,7 @@ function BigPanel({
             {/* EXTENSIONS  */}
             {panelVariant[0].map((variant, i) => (
               <React.Fragment key={i}>
-                {variant.plugs > 0 && (
+                {variant.pin5Amp10Socket > 0 && (
                   <div className="flex items-center gap-[20px]">
                     {Array.from({ length: variant.plugs }, (_, i) => {
                       return <PlugVariant key={`0-plug-${i}`} />;
@@ -151,11 +160,16 @@ function BigPanel({
           {/* DOWN  */}
           <div className=" flex justify-start items-center gap-[30px]">
             {/* EXTENSIONS  */}
-            {panelVariant[1].filter((el) => el === "ext").length >= 2 && (
+            {panelVariant[1].filter((el) => el === "ext").length >= 1 && (
               <React.Fragment>
                 <div className="flex items-center gap-[20px]">
                   {Array.from({ length: 1 }, (_, i) => {
-                    return <PlugVariant key={`plug-${i}`} />;
+                    return (
+                      <PlugVariant
+                        iconType={panelSpecs.extensionTypeOne}
+                        key={`plug-${i}`}
+                      />
+                    );
                   })}
                 </div>
               </React.Fragment>
@@ -210,14 +224,21 @@ function BigPanel({
                   {variant.fans > 0 && (
                     <div className="flex items-center gap-[20px]">
                       {Array.from({ length: variant.fans }, (_, i) => {
-                        return <FansVariant key={`1-fans-${i}`} />;
+                        return (
+                          <FansVariant fanIcon={fanIcon} key={`1-fans-${i}`} />
+                        );
                       })}
                     </div>
                   )}
                   {variant.dimmers > 0 && (
                     <div className="flex items-center gap-[20px]">
                       {Array.from({ length: variant.dimmers }, (_, i) => {
-                        return <DimmerVariant key={`0-dimmers-${i}`} />;
+                        return (
+                          <DimmerVariant
+                            dimmerIcon={dimmerIcon}
+                            key={`0-dimmers-${i}`}
+                          />
+                        );
                       })}
                     </div>
                   )}
@@ -238,11 +259,16 @@ function BigPanel({
               </div>
             )}
             {/* EXTENSIONS  */}
-            {panelVariant[1].filter((el) => el === "ext").length >= 1 && (
+            {panelVariant[1].filter((el) => el === "ext").length >= 2 && (
               <React.Fragment>
                 <div className="flex items-center gap-[20px]">
                   {Array.from({ length: 1 }, (_, i) => {
-                    return <PlugVariant key={`plug-${i}`} />;
+                    return (
+                      <PlugVariant
+                        iconType={panelSpecs.extensionTypeTwo}
+                        key={`plug-${i}`}
+                      />
+                    );
                   })}
                 </div>
               </React.Fragment>

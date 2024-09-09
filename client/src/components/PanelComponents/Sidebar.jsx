@@ -37,6 +37,8 @@ function Sidebar({ panelType, setSidebarOpen, setSidebarToolShows }) {
                     panelIcons: {},
                     savedUpSpace: 6,
                     savedSpaceLeft: 12,
+                    extensionTypeOne: "",
+                    extensionTypeTwo: "",
                   });
                   setSpaceLeft(panelSpecs.panelSize);
                   setUpSpace(6);

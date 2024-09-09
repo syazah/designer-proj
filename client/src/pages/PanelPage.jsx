@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserAuthContext } from "../context/UserAuthProvider";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../components/PanelComponents/Sidebar";
 import SidebarTool from "../components/PanelComponents/SidebarTool";
 import { PanelContext } from "../context/PanelContextProvider";
@@ -15,11 +15,26 @@ function PanelPage() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [cantAddMore, setCantAddMore] = useState(false);
   const detailRef = useRef(null);
+  const navigation = useNavigate();
   const settingRef = useRef(null);
+  const [panelLoading, setPanelLoading] = useState(false);
   const [sidebarToolShows, setSidebarToolShows] = useState("");
   const [panelUpdating, setPanelUpdating] = useState(false);
-  const { panelSpecs, setPanelSpecs, spaceLeft, upSpace } =
-    useContext(PanelContext);
+  const addPanelPop = useRef(null);
+  const {
+    panelSpecs,
+    setPanelSpecs,
+    spaceLeft,
+    upSpace,
+    currentCollectionId,
+    setUpSpace,
+    setSpaceLeft,
+  } = useContext(PanelContext);
+  const [panelBasicDetail, setPanelBasicDetail] = useState({
+    collectionId: currentCollectionId,
+    panelName: "",
+    panelType: "",
+  });
 
   //DEBOUNCE STORE PANEL STATE
   async function UpdatePanelData() {
@@ -98,6 +113,53 @@ function PanelPage() {
       }
     } catch (error) {
       alert("Some Internal Error");
+    }
+  }
+  async function HandleCreatePanel() {
+    try {
+      setPanelLoading(true);
+      const res = await fetch("/api/v1/general/basic-panel-detail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(panelBasicDetail),
+      });
+      const data = await res.json();
+      if (data.success === true) {
+        setTimeout(() => {
+          navigation(`/panel/${data.panelId}`, { replace: true });
+          setPanelSpecs({
+            panelSize: 2,
+            panelVariant: [],
+            bigPanelVariant: [[], []],
+            panelIcons: {},
+            panelGlass: "#000",
+            panelFrame: "#ddd",
+            panelWall: "",
+            droppableType: 1,
+            droppableColor: "#17c5e2",
+            savedSpaceLeft: 12,
+            savedUpSpace: 6,
+            fanIcon: {
+              id: "FN01",
+              src: "/ICONS/fans/fan1.png",
+            },
+            dimmerIcon: { id: "AB04", src: "/ICONS/alphabets/alphabet-d.png" },
+          });
+          setUpSpace(6);
+          setSpaceLeft(2);
+          setSidebarToolShows("");
+          setSidebarOpen(false);
+          addPanelPop.current.style.transform = "scale(0)";
+          addPanelPop.current.style.opacity = 0;
+        }, 500);
+      } else {
+        alert("Error", data.message);
+      }
+      setPanelLoading(false);
+    } catch (error) {
+      console.log(error);
+      setPanelLoading(false);
+      alert("ERROR");
     }
   }
 
@@ -292,8 +354,138 @@ function PanelPage() {
                   ? { width: "85%", backgroundColor: panelSpecs.panelWall }
                   : { width: "100%", backgroundColor: panelSpecs.panelWall }
               }
-              className={`flex justify-center items-center h-full transition-all duration-500`}
+              className={`flex relative justify-center items-center h-full transition-all duration-500`}
             >
+              {sidebarToolShows === "" && (
+                <div className="absolute bottom-0 left-0 bg-red-600 p-3">
+                  <h1 className="font-semibold">Start Here</h1>
+                </div>
+              )}
+              {/* CREATE NEW PANEL  */}
+              {
+                <div
+                  onClick={() => {
+                    addPanelPop.current.style.transform = "scale(1)";
+                    addPanelPop.current.style.opacity = 1;
+                  }}
+                  className="absolute bottom-0 right-0 bg-red-600 p-1 cursor-pointer hover:bg-red-800 hover:text-zinc-950 transition-all duration-500 rounded-tl-md"
+                >
+                  <h1 className="font-semibold">Create New Panel</h1>
+                </div>
+              }
+              {/* View All PANEL  */}
+              {
+                <div
+                  onClick={() => {
+                    window.history.back();
+                  }}
+                  className="absolute bottom-8 right-0 bg-red-600 p-1 cursor-pointer hover:bg-red-800 hover:text-zinc-950 transition-all duration-500 rounded-t-md"
+                >
+                  <h1 className="font-semibold">View All Panels</h1>
+                </div>
+              }
+              {/* CREATE NEW PANEL  */}
+              <div
+                ref={addPanelPop}
+                className="fixed transition-all duration-500 opacity-0 scale-0 w-full h-full bg-[rgb(10,10,10,0.5)] flex justify-center items-center top-0 left-0 z-50
+        "
+              >
+                <div className="w-[600px] flex flex-col p-4 rounded-xl border-y-2 border-red-600 bg-zinc-950 gap-2">
+                  <div className="w-full flex justify-between items-center ">
+                    <h2 className="text-white text-2xl font-semibold border-b-2 border-red-600">
+                      Add Panel
+                    </h2>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="red"
+                      onClick={() => {
+                        addPanelPop.current.style.transform = "scale(0)";
+                        addPanelPop.current.style.opacity = 0;
+                      }}
+                      className="size-8 hover:stroke-red-800 cursor-pointer transition-all duration-300"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                      />
+                    </svg>
+                  </div>
+
+                  {/* PANEL FORM  */}
+                  <div className="flex flex-col justify-start items-start mt-4 gap-4">
+                    <div>
+                      <h2 className="text-base text-red-600 mb-2">
+                        Panel Name
+                      </h2>
+                      <input
+                        onChange={(e) => {
+                          setPanelBasicDetail({
+                            ...panelBasicDetail,
+                            panelName: e.target.value,
+                          });
+                        }}
+                        className="p-2 bg-zinc-900 w-full rounded-lg text-white focus:outline-none focus:border-none"
+                        placeholder="Name Your Panel"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-4">
+                      <div>
+                        <h2 className="text-base text-red-600">Panel Type</h2>
+                        <p className="text-sm text-zinc-400">
+                          Select The Panel Type
+                        </p>
+                      </div>
+                      <div className="flex gap-2">
+                        <h3
+                          onClick={() => {
+                            setPanelBasicDetail({
+                              ...panelBasicDetail,
+                              panelType: "normal",
+                            });
+                          }}
+                          className={`p-2 border-x-[2px] ${
+                            panelBasicDetail.panelType === "normal"
+                              ? "bg-red-600 text-white"
+                              : ""
+                          } border-red-600 text-white rounded-full flex justify-center items-center cursor-pointer hover:bg-red-600`}
+                        >
+                          Panel Without Extension
+                        </h3>
+                        <h3
+                          onClick={() => {
+                            setPanelBasicDetail({
+                              ...panelBasicDetail,
+                              panelType: "extension",
+                            });
+                          }}
+                          className={`p-2 ${
+                            panelBasicDetail.panelType === "extension"
+                              ? "bg-red-600 text-white"
+                              : ""
+                          }  border-x-2 border-red-600 text-white rounded-full flex justify-center items-center cursor-pointer hover:bg-red-600`}
+                        >
+                          Panel With Extensions
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* PANEL SUBMIT BUTTON  */}
+                  <div className="w-full p-2 flex justify-end items-center">
+                    <button
+                      onClick={HandleCreatePanel}
+                      className="p-2 px-4 rounded-full bg-red-600"
+                    >
+                      {panelLoading ? "Loading..." : "ADD +"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               {panelSpecs.panelSize === 12 ? (
                 <BigPanel
                   upSpace={upSpace}
@@ -301,6 +493,8 @@ function PanelPage() {
                   panelGlass={panelSpecs.panelGlass}
                   panelFrame={panelSpecs.panelFrame}
                   panelVariant={panelSpecs.bigPanelVariant}
+                  fanIcon={panelSpecs.fanIcon}
+                  dimmerIcon={panelSpecs.dimmerIcon}
                 />
               ) : (
                 <Panel
@@ -309,6 +503,8 @@ function PanelPage() {
                   panelGlass={panelSpecs.panelGlass}
                   panelFrame={panelSpecs.panelFrame}
                   panelVariant={panelSpecs.panelVariant}
+                  fanIcon={panelSpecs.fanIcon}
+                  dimmerIcon={panelSpecs.dimmerIcon}
                 />
               )}
             </div>
