@@ -16,6 +16,7 @@ function Panel({
   dimmerIcon,
   normalPanelRegSize = false,
   panelIcons = [],
+  droppableType,
 }) {
   // PANEL WIDTH AND HEIGHT
   let panelWidth, panelHeight;
@@ -97,6 +98,7 @@ function Panel({
                         );
                         return (
                           <DroppableCollection
+                            droppableType={droppableType}
                             key={`${indexs}-${i}`}
                             id={`${indexs}-${i}`}
                             iconData={iconDataToSend}
@@ -110,6 +112,7 @@ function Panel({
                         Array.from({ length: variant.switches / 2 }, (_, i) => {
                           return (
                             <DroppableCollection
+                              droppableType={droppableType}
                               key={`${indexs}-${i}`}
                               id={`${indexs}-${i}`}
                             />
@@ -119,6 +122,7 @@ function Panel({
                         Array.from({ length: variant.switches / 2 }, (_, i) => {
                           return (
                             <DroppableCollection
+                              droppableType={droppableType}
                               key={`${indexs}-${i}`}
                               id={`${indexs}-${i}`}
                               normalPanel={normalPanel}

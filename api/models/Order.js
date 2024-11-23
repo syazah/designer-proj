@@ -18,6 +18,29 @@ const OrderSchema = new Mongoose.Schema(
     pdfLink: {
       type: String,
     },
+    currentStage: {
+      type: String,
+      default: "Admin",
+      enum: ["Admin", "Sale", "Manufacturer"],
+    },
+    detailedStage: {
+      type: String,
+      default: null,
+    },
+    assignedTo: {
+      type: Mongoose.Schema.Types.ObjectId,
+      refPath: "currentStage",
+    },
+    worker: {
+      type: Mongoose.Schema.Types.ObjectId,
+      ref: "Worker",
+    },
+    quotationCost: {
+      type: Number,
+    },
+    orderCompletedImage: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

@@ -16,7 +16,6 @@ function ViewUsersBusiness() {
       });
       const data = await res.json();
       if (data.success === true) {
-        console.log(data.data);
         setCompleteData(data.data);
       } else {
         alert(data.message);

@@ -8,6 +8,7 @@ import { PanelContext } from "../../context/PanelContextProvider";
 import BigPanel from "../PanelComponents/BigPanel";
 function CollectionPanels({ panels, setAddPanelPopup, normalPanels }) {
   const collectionRef = useRef(null);
+
   const { setPanelCollectionContext } = useContext(PanelContext);
   useEffect(() => {
     setPanelCollectionContext(collectionRef);
@@ -108,7 +109,6 @@ function CollectionPanels({ panels, setAddPanelPopup, normalPanels }) {
 
 function AvailablePanel({ panel }) {
   const { user } = useContext(UserAuthContext);
-  console.log(panel);
   const panelRef = useRef(null);
   const downloadOptionRef = useRef(null);
   const [downloadOptionShowing, setDownloadOptionShowing] = useState(false);
@@ -164,6 +164,7 @@ function AvailablePanel({ panel }) {
             fanIcon={panel?.panelData.fanIcon}
             panelIcons={Object.entries(panel?.panelData?.panelIcons || {})}
             dimmerIcon={panel?.panelData.dimmerIcon}
+            droppableType={panel?.panelData.droppableType}
           />
         ) : (
           <BigPanel
@@ -175,6 +176,7 @@ function AvailablePanel({ panel }) {
             fanIcon={panel?.panelData.fanIcon}
             dimmerIcon={panel?.panelData.dimmerIcon}
             panelIcons={Object.entries(panel.panelData?.panelIcons || {})}
+            droppableType={panel?.panelData.droppableType}
           />
         )}
       </div>

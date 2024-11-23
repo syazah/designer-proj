@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { useDrop } from "react-dnd";
 import { PanelContext } from "../../context/PanelContextProvider";
 import { PanelIcons } from "../../../data/PanelSpecs";
-function Droppables({ dropId, iconData, normalPanel }) {
+function Droppables({ dropId, iconData, normalPanel, droppableType = null }) {
   const { panelSpecs, setPanelSpecs } = useContext(PanelContext);
   const [imageDetail, setImageDetail] = useState(null);
   // DROPPABLE LOGIC
@@ -31,6 +31,7 @@ function Droppables({ dropId, iconData, normalPanel }) {
       alert("Image or dropId not found:");
     }
   }
+
   return (
     <>
       {normalPanel ? (
@@ -51,19 +52,33 @@ function Droppables({ dropId, iconData, normalPanel }) {
               : { borderColor: panelSpecs.droppableColor }
           }
           ref={drop}
-          className={`w-[50px] h-[50px] border-[2px] transition-all duration-200 cursor-pointer  ${
-            panelSpecs.droppableType === "0" ? "rounded-full" : ""
-          } p-1`}
+          className={`w-[50px] h-[50px] ${
+            (droppableType ?? panelSpecs.droppableType) === "2"
+              ? ""
+              : "border-[2px]"
+          } transition-all duration-200 cursor-pointer  ${
+            (droppableType ?? panelSpecs.droppableType) === "0"
+              ? "rounded-full"
+              : ""
+          } p-1 relative`}
         >
+          {(droppableType ?? panelSpecs.droppableType) === "2" &&
+            imageDetail === null &&
+            iconData.length === 0 && (
+              <div
+                style={{ backgroundColor: panelSpecs.droppableColor }}
+                className="w-1 h-1 rounded-full absolute top-[50%] -translate-y-[50%] left-[50%] -translate-x-[50%] z-10"
+              ></div>
+            )}
           {iconData.length > 0 ? (
             <img
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain z-20 relative"
               src={iconData[0][1]}
             />
           ) : (
             imageDetail != null && (
               <img
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain z-20 relative"
                 src={imageDetail?.src}
               />
             )

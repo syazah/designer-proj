@@ -14,18 +14,14 @@ import {
   GetOrderHistoryController,
 } from "../controllers/user.controller.js";
 import multer from "multer";
+import { initializeApp } from "firebase/app";
+import config from "../utils/firebase.utils.js";
 const routes = express.Router();
 
 // MULTER CONFIG
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Ensure the 'uploads' directory exists
-  },
-  filename: function (req, file, cb) {
-    cb(null, `${Date.now()}-${file.originalname}`); // Create a unique filename
-  },
-});
-const upload = multer({ storage });
+initializeApp(config.firebaseConfig);
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 // ROUTES
 routes.post("/signup", UserSignUpController);

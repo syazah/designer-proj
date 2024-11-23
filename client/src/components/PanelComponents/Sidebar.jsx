@@ -3,8 +3,13 @@ import sidebarData from "../../../data/SideBar";
 import { PanelContext } from "../../context/PanelContextProvider";
 
 function Sidebar({ panelType, setSidebarOpen, setSidebarToolShows }) {
-  const { panelSpecs, setPanelSpecs, setSpaceLeft, setUpSpace } =
-    useContext(PanelContext);
+  const {
+    panelSpecs,
+    setPanelSpecs,
+    setSpaceLeft,
+    setUpSpace,
+    setTwelveModExtError,
+  } = useContext(PanelContext);
   const [selectedId, setSelectedId] = useState(-1);
   return (
     <div className="w-[100%] h-[15%] bg-zinc-950 flex">
@@ -28,6 +33,16 @@ function Sidebar({ panelType, setSidebarOpen, setSidebarToolShows }) {
               onClick={() => {
                 if (selectedId <= 0 && specs.id > 2) {
                   return;
+                }
+                if (specs.id >= 2 && panelSpecs.panelSize === 12) {
+                  const countExt = panelSpecs.bigPanelVariant[1].reduce(
+                    (acc, val) => (val === "ext" ? acc + 1 : acc),
+                    0
+                  );
+                  if (countExt < 2) {
+                    setTwelveModExtError(true);
+                    return;
+                  }
                 }
                 if (specs.id === 0) {
                   setPanelSpecs({

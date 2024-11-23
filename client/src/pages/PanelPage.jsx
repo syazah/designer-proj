@@ -29,6 +29,8 @@ function PanelPage() {
     currentCollectionId,
     setUpSpace,
     setSpaceLeft,
+    twelveModExtError,
+    setTwelveModExtError,
   } = useContext(PanelContext);
   const [panelBasicDetail, setPanelBasicDetail] = useState({
     collectionId: currentCollectionId,
@@ -49,8 +51,7 @@ function PanelPage() {
         alert("Error");
       }
     } catch (error) {
-      console.log(error);
-      alert("Error");
+      alert("Error, Something went wrong");
     }
   }
 
@@ -157,7 +158,6 @@ function PanelPage() {
       }
       setPanelLoading(false);
     } catch (error) {
-      console.log(error);
       setPanelLoading(false);
       alert("ERROR");
     }
@@ -303,6 +303,9 @@ function PanelPage() {
                   </option>
                   <option className="cursor-pointer" value={0}>
                     Circle
+                  </option>
+                  <option className="cursor-pointer" value={2}>
+                    Dot
                   </option>
                 </select>
               </div>
@@ -532,6 +535,28 @@ function PanelPage() {
               <button
                 onClick={() => {
                   setCantAddMore(false);
+                }}
+                className="bg-red-600 p-2 px-4 rounded-full hover:bg-red-700"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* CAN'T MOVE TWELVE  */}
+      {twelveModExtError && (
+        <div className="absolute top-0 left-0 w-full h-full bg-[rgb(1,1,1,0.5)] z-50 flex justify-center items-center">
+          <div className="w-[500px] p-4 bg-black rounded-xl border-2 border-red-600">
+            <h1 className="text-red-600">Error !</h1>
+            <p className="text-white ">
+              You need to select atleast two accessories when you are choosing
+              12 Module Panel.
+            </p>
+            <div className="flex justify-end items-center">
+              <button
+                onClick={() => {
+                  setTwelveModExtError(false);
                 }}
                 className="bg-red-600 p-2 px-4 rounded-full hover:bg-red-700"
               >

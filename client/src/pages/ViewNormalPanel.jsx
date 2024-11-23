@@ -44,7 +44,7 @@ function ViewNormalPanel() {
       panelFrame: panelFrameColor === "" ? "#ab936b" : panelFrameColor,
       panelWall: panelBackgroundColor,
     };
-    console.log(completeFormData);
+
     try {
       setAddCollectionLoading(true);
       const res = await fetch("/api/v1/user/add-normal-panel", {

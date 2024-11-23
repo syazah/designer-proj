@@ -3,11 +3,14 @@ import jsPDF from "jspdf";
 const getCompletePdfOfComponent = (parentref) => {
   if (parentref.current && document.body.contains(parentref.current)) {
     const childPanels = parentref.current.querySelectorAll(".available-panel");
-    const doc = new jsPDF();
-    const imgWidth = 190;
+    const doc = new jsPDF({ unit: "px", format: "a4", compress: true });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
     const marginTop = 10;
+    const imgWidth = pageWidth - 10;
+    let currentY = marginTop + 20;
     const generatePdf = async () => {
-      doc.text("Panel Complete Collection", 10, marginTop);
+      doc.text("Panel Collection PDF", 10, marginTop);
 
       for (let i = 0; i < childPanels.length; i++) {
         const element = childPanels[i];
@@ -16,15 +19,12 @@ const getCompletePdfOfComponent = (parentref) => {
           const canvas = await html2canvas(element);
           const imageData = canvas.toDataURL("image/png");
           const imgHeight = (canvas.height * imgWidth) / canvas.width;
-          let position = marginTop + (i > 0 ? 50 : 0);
-
-          // Check if the image fits in the current page, otherwise add a new page
-          if (i > 0) {
+          if (currentY + imgHeight > pageHeight - 10) {
             doc.addPage();
-            position = marginTop;
+            currentY = marginTop;
           }
-
-          doc.addImage(imageData, "PNG", 10, position, imgWidth, imgHeight);
+          doc.addImage(imageData, "JPEG", 10, currentY, imgWidth, imgHeight);
+          currentY += imgHeight + 10;
         } catch (error) {
           console.log("Error generating canvas:", error);
         }

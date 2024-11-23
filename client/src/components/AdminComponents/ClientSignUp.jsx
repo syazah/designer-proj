@@ -179,7 +179,7 @@ function SecondPart({
 
   async function handleVerifyOtp(e) {
     e.preventDefault();
-    console.log(otpForm);
+   
     try {
       setOtpLoading(true);
       const res = await fetch("/api/v1/user/verify-otp", {

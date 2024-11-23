@@ -10,10 +10,10 @@ function Draggable({ id, src, mainId }) {
   }));
   return (
     <img
-      className="w-[40px] cursor-pointer"
+      className="w-[30px] cursor-pointer"
       ref={drag}
       src={src}
-      style={isDragging ? { width: "40px" } : {}}
+      style={isDragging ? { width: "35px" } : {}}
     />
   );
 }

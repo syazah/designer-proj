@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Loading from "../Loading";
 import Panel from "../PanelComponents/Panel";
 import BigPanel from "../PanelComponents/BigPanel";
+import { PanelContext } from "../../context/PanelContextProvider";
 
 function UserDetail() {
   const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [completeData, setCompleteData] = useState(null);
+  const { panelSpecs, setPanelSpecs } = useContext(PanelContext);
   //   GET COMPLETE USER DETAIL
   async function getCompleteUserDetail() {
     try {
@@ -20,7 +22,6 @@ function UserDetail() {
       const data = await res.json();
       if (data.success === true) {
         setCompleteData(data.data);
-        console.log(completeData);
       } else {
         alert("Error", data.message);
       }
@@ -123,6 +124,7 @@ function UserDetail() {
                             panelVariant={panel.panelData.panelVariant}
                             fanIcon={panel.panelData.fanIcon}
                             dimmerIcon={panel.panelData.dimmerIcon}
+                            droppableType={panel.panelData.droppableType}
                             panelIcons={Object.entries(
                               panel.panelData?.panelIcons || {}
                             )}
@@ -139,6 +141,7 @@ function UserDetail() {
                             panelIcons={Object.entries(
                               panel.panelData?.panelIcons || {}
                             )}
+                            droppableType={panel.panelData.droppableType}
                           />
                         )}
                       </div>

@@ -6,8 +6,8 @@ import { PanelIcons } from "../../../data/PanelSpecs";
 function FansVariant({ normalPanel, fanIcon }) {
   const { panelSpecs, setPanelSpecs } = useContext(PanelContext);
   const [imageDetail, setImageDetail] = useState({
-    id: "FN01",
-    src: "/ICONS/fans/fan1.png",
+    id: "70",
+    src: "/ICONS/fans/70.png",
   });
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "image",

@@ -12,7 +12,12 @@ import nodemailer from "nodemailer";
 import { Panel } from "../models/Panel.js";
 import { Business } from "../models/Business.js";
 import { NormalPanel } from "../models/NormalPanel.js";
-import { v2 as cloudinary } from "cloudinary";
+import {
+  getStorage,
+  ref,
+  getDownloadURL,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { Order } from "../models/Order.js";
 dotenv.config();
 
@@ -84,9 +89,8 @@ export const UserSignUpController = async (req, res, next) => {
     const hashedPassword = bcryptjs.hashSync(password, 10);
     const createdByModel = userType === 8 ? "Business" : "Admin";
     if (userType === 8) {
-      console.log("Hello");
       const business = await Business.findOne({ _id: parentId });
-      console.log(business.clientsCreated.length);
+
       if (business.clientsCreated.length >= canCreate[business.tier - 1]) {
         return next(
           errorHandler(400, "You've reached your client creation limit")
@@ -348,33 +352,45 @@ export const AddNormalPanelCollection = async (req, res, next) => {
 };
 
 // HANDLE RAISE ORDER
-
-//CLOUDINARY CONFIG
-cloudinary.config({
-  cloud_name: "dkmfel0qk",
-  api_key: process.env.CLOUDINARY_KEY,
-  api_secret: process.env.CLOUDINARY_SECRET, // Click 'View API Keys' above to copy your API secret
-});
 export const UploadOrderController = async (req, res, next) => {
   try {
-    const file = req.file;
     const { id } = req.params;
-    const { filename, path } = file;
-    console.log(id);
-    const uploadURL = await cloudinary.uploader.upload(path, {
-      public_id: id + filename,
-    });
-    res.status(200).json({ success: true, uploadURL });
+    if (!id) {
+      return next(
+        erroraHandler(
+          400,
+          "Something went wrong while fetching the id for the file"
+        )
+      );
+    }
+    const firebaseStorage = getStorage();
+    const storageRef = ref(
+      firebaseStorage,
+      `OrderPdfs/${id}/${req.file.originalname}`
+    );
+    const metadata = { contentType: req.file.mimetype };
+    if (!req.file.buffer) {
+      return next(errorHandler(400, "No data found in pdf"));
+    }
+    const snapshot = await uploadBytesResumable(
+      storageRef,
+      req.file.buffer,
+      metadata
+    );
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    return res.status(200).json({ success: true, downloadURL });
   } catch (error) {
-    console.log(error);
     return next(error);
   }
 };
 export const HandleRaiseOrderController = async (req, res, next) => {
   try {
-    const { panels, userID } = req.body;
+    const { panels, userID, pdfLink } = req.body;
     if (!panels || panels.length === 0 || !userID) {
       return next(errorHandler(400, "Data Is Needed to raise order"));
+    }
+    if (!pdfLink) {
+      return next(errorHandler(400, "Pdf not found in the request"));
     }
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let referenceNumber = "";
@@ -387,15 +403,46 @@ export const HandleRaiseOrderController = async (req, res, next) => {
       raisedBy: userID,
       panelData: panels,
       referenceNumber,
+      currentStage: "Admin",
+      pdfLink,
     });
     await orderData.save();
-    await User.findOneAndUpdate(
+    const user = await User.findOneAndUpdate(
       { _id: userID },
-      { $addToSet: { ordersRaised: orderData._id } }
+      { $addToSet: { ordersRaised: orderData._id } },
+      { new: true }
     );
+    const mailOptions = {
+      from: process.env.AUTH_MAIL,
+      to: [
+        "fttinnovationsproduction@gmail.com",
+        "sanchit.sehgal@alisan.co.in",
+        "alisanpartner@gmail.com",
+        "thesyazah@gmail.com",
+      ],
+      subject: `Order Raised - ${referenceNumber}`,
+      html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2 style="color: #333;">Order Confirmation</h2>
+        <p>Hello,</p>
+        <p>A new order has been raised by user with ID: <strong>${userID}</strong>. username: <strong>${user?.username}</strong> Email: <strong>${user?.email}</strong></p>
+        <p>You can download the order details as a PDF using the link below:</p>
+        <p>
+          <a
+            href="${pdfLink}"
+            style="color: #0066cc; text-decoration: none;"
+          >
+            Download Order PDF
+          </a>
+        </p>
+        <p>Thank you for your order!</p>
+        <p>Best regards,<br>Your Company Team</p>
+      </div>
+    `,
+    };
+    transporter.sendMail(mailOptions);
     res.status(200).json({ success: true, referenceNumber });
   } catch (error) {
-    console.log(error);
     return next(error);
   }
 };

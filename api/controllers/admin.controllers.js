@@ -3,11 +3,17 @@ import validator from "validator";
 import PasswordValidator from "password-validator";
 import { Admin } from "../models/Admin.js";
 import { User } from "../models/User.js";
+import { Order } from "../models/Order.js";
 import { Business } from "../models/Business.js";
+import { Manufacturer } from "../models/Manufacturer.js";
+import { Customer, Sale } from "../models/Sale.js";
 import { NormalPanel } from "../models/NormalPanel.js";
 import bcryptjs from "bcryptjs";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import { Costsheet } from "../models/Costsheet.js";
+import { Inventory } from "../models/Inventory.js";
 dotenv.config();
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -78,6 +84,29 @@ export const AdminSignUpController = async (req, res, next) => {
     res.status(200).json({ success: true, message: "Admin Created" });
   } catch (error) {
     next(error);
+  }
+};
+
+//SIGN IN
+export const AdminSignInController = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return next(errorHandler(400, "Send All The Details"));
+    }
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return next(errorHandler(400, "No Admin Found With This Mail"));
+    }
+    const correctPassword = bcryptjs.compareSync(password, admin.password);
+    if (!correctPassword) {
+      return next(errorHandler(400, "Password is not correct"));
+    }
+    const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET);
+    res.status(200).json({ success: true, token, type: 0 });
+  } catch (error) {
+    return next(error);
   }
 };
 
@@ -252,5 +281,393 @@ export const GetBusinessDetailController = async (req, res, next) => {
     res.status(200).json({ success: true, data });
   } catch (error) {
     next(errorHandler(error));
+  }
+};
+
+//! APP
+//ADMIN GET ADMIN DETAILS
+export const AdminGetAdminDetailsController = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      return next(errorHandler(400, "Admin Token Not Found"));
+    }
+    const { id } = await jwt.verify(token, process.env.JWT_SECRET);
+    if (!id) {
+      return next(
+        errorHandler(
+          400,
+          "Something went wrong while getting correct id of admin"
+        )
+      );
+    }
+    const admin = await Admin.findOne({ _id: id }).select(
+      "name username email"
+    );
+    const orders = await Order.find({}).sort({ createdAt: -1 }).limit(5);
+    if (!admin) {
+      return next(errorHandler(400, "No admin found"));
+    }
+    res.status(200).json({ success: true, admin, orders });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//ADMIN ADD SALES PERSON
+export const AdminAddSalesPersonController = async (req, res, next) => {
+  try {
+    const { email, name, password, phoneNumber } = req.body;
+    if (!email || !name || !password || !phoneNumber) {
+      return next(errorHandler(400, "All the fields are required"));
+    }
+    if (password.length < 8) {
+      return next(
+        errorHandler(400, "Password must be having at least 8 characters")
+      );
+    }
+    if (phoneNumber.length < 10) {
+      return next(errorHandler(400, "Wrong Phone Number Please Check"));
+    }
+    const hashedPassword = bcryptjs.hashSync(password, 10);
+    const salesman = new Sale({
+      email,
+      password: hashedPassword,
+      name,
+      phoneNumber,
+    });
+    await salesman.save();
+    res.status(200).json({ success: true, message: "Salesman is created" });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const AdminGetSalesTeamController = async (req, res, next) => {
+  try {
+    const salesTeam = await Sale.find({});
+    res.status(200).json({ success: true, salesTeam });
+  } catch (error) {
+    return next(error);
+  }
+};
+// GET MANUFACTURING TEAM
+export const AdminGetManufacturingTeamController = async (req, res, next) => {
+  try {
+    const manTeam = await Manufacturer.find({});
+    res.status(200).json({ success: true, manTeam });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+// ADD MANUFACTURER CONTROLLER
+export const AdminAddManufacturerController = async (req, res, next) => {
+  try {
+    const { email, name, password, phoneNumber } = req.body;
+    if (!email || !name || !password || !phoneNumber) {
+      return next(errorHandler(400, "All the fields are required"));
+    }
+    if (password.length < 8) {
+      return next(
+        errorHandler(400, "Password must be having at least 8 characters")
+      );
+    }
+    if (phoneNumber.length < 10) {
+      return next(errorHandler(400, "Wrong Phone Number Please Check"));
+    }
+    const hashedPassword = bcryptjs.hashSync(password, 10);
+    const salesman = new Manufacturer({
+      email,
+      password: hashedPassword,
+      name,
+      phoneNumber,
+    });
+    await salesman.save();
+    res.status(200).json({ success: true, message: "Manufacturer is created" });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//DELETE SALESMAN
+export const AdminDeleteSalesManController = async (req, res, next) => {
+  try {
+    const { _id } = req.body;
+    if (!_id) {
+      return next(errorHandler(400, "Request ID not found"));
+    }
+    await Sale.findOneAndDelete({ _id });
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    return next(error);
+  }
+};
+//DELETE Manufacturer
+export const AdminDeleteManufacturerController = async (req, res, next) => {
+  try {
+    const { _id } = req.body;
+    if (!_id) {
+      return next(errorHandler(400, "Request ID not found"));
+    }
+    await Manufacturer.findOneAndDelete({ _id });
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//GET ADMIN ORDERS
+export const AdminGetAdminOrdersController = async (req, res, next) => {
+  try {
+    const AdminOrders = await Order.find({
+      currentStage: "Admin",
+      detailedStage: null,
+    });
+    const SalesOrders = await Order.find({ detailedStage: "sales-to-admin" });
+    const CompletedOrders = await Order.find({ detailedStage: "completed" });
+    return res
+      .status(200)
+      .json({ success: true, AdminOrders, SalesOrders, CompletedOrders });
+  } catch (error) {
+    return next(error);
+  }
+};
+//GET SALES CONTROLLER
+export const AdminGetSalesOrdersController = async (req, res, next) => {
+  try {
+    const SalesOrders = await Order.find({ currentStage: "Sale" }).populate({
+      path: "assignedTo",
+    });
+    return res.status(200).json({ success: true, SalesOrders });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//GET SPECIFIC ORDER
+export const AdminGetSpecificOrderController = async (req, res, next) => {
+  try {
+    const { _id } = req.body;
+    if (!_id) {
+      return next(
+        errorHandler(400, "The order id is not present in the request")
+      );
+    }
+    let order = await Order.findOne({ _id })
+      .populate({
+        path: "raisedBy worker",
+        populate: { path: "createdBy" },
+      })
+      .populate({ path: "assignedTo" });
+
+    if (!order) {
+      return next(errorHandler(400, "Cannot find the order by this id"));
+    }
+    return res.status(200).json({ success: true, order });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//ASSIGN ORDER
+export const AdminAssignOrderSalesmanController = async (req, res, next) => {
+  try {
+    const { orderID, salesManID } = req.body;
+    if (!orderID || !salesManID) {
+      return next(errorHandler(400, "No Proper IDs found"));
+    }
+    await Order.findOneAndUpdate(
+      { _id: orderID },
+      { currentStage: "Sale", assignedTo: salesManID }
+    );
+    await Sale.findOneAndUpdate(
+      { _id: salesManID },
+      { $push: { orders: orderID } }
+    );
+    res.status(200).json({ success: true });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//Admin view salesman controller
+export const AdminViewSalesmanController = async (req, res, next) => {
+  try {
+    const { id } = req.body;
+    if (!id) {
+      return next(errorHandler(400, "No id found"));
+    }
+    const salesman = await Sale.findOne({ _id: id }).populate("orders");
+    if (!salesman) {
+      return next(errorHandler(400, "No Salesman with this id found"));
+    }
+    return res.status(200).json({ success: true, salesman });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//ADMIN UPDATE SHEET CONTROLLER
+export const AdminUpdateCostSheetController = async (req, res, next) => {
+  try {
+    const { ms1, pc1, tsb, pcb, cse, ps, esp, scr, _id } = req.body;
+    const costSheet = await Costsheet.find({});
+    if (costSheet.length === 0) {
+      const sheet = new Costsheet({
+        ms1,
+        pc1,
+        tsb,
+        pcb,
+        cse,
+        ps,
+        esp,
+        scr,
+      });
+      await sheet.save();
+    }
+    const newSheet = await Costsheet.findOneAndUpdate(
+      { _id: _id },
+      {
+        ms1,
+        pc1,
+        tsb,
+        pcb,
+        cse,
+        ps,
+        esp,
+        scr,
+      },
+      { new: true }
+    );
+    res.status(200).json({ success: true, costSheet: newSheet });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//ADMIN GET COST SHEET
+export const AdminGetCostSheetController = async (req, res, next) => {
+  try {
+    const costSheet = await Costsheet.find({});
+    return res.status(200).json({ success: true, costSheet: costSheet[0] });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//ADMIN GET MANUFACTURING TEAM
+export const AdminAssignOrderManufacturer = async (req, res, next) => {
+  try {
+    const { orderID, manufacturerID } = req.body;
+    if (!orderID || !manufacturerID) {
+      return next(errorHandler(400, "No Proper IDs found"));
+    }
+    await Order.findOneAndUpdate(
+      { _id: orderID },
+      {
+        currentStage: "Manufacturer",
+        assignedTo: manufacturerID,
+        detailedStage: null,
+      }
+    );
+    await Sale.findOneAndUpdate(
+      { _id: manufacturerID },
+      { $push: { orders: orderID } }
+    );
+    res.status(200).json({ success: true });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//GET MANUFACTURER ASSIGNED ORDERS
+export const AdminGetManufacturerOrders = async (req, res, next) => {
+  try {
+    const orders = await Order.find({ currentStage: "Manufacturer" }).populate({
+      path: "assignedTo panelData",
+    });
+    if (!orders) {
+      return next(errorHandler(400, "No orders found for manufacturers"));
+    }
+    return res.status(200).json({ success: true, orders });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//ADMIN ADD INVENTORY
+export const AdminAddInventoryDetail = async (req, res, next) => {
+  try {
+    const { name, minimum, objectID } = req.body;
+    if (!name || !minimum) {
+      return next(errorHandler(400, "Required fields are not provided"));
+    }
+    const existInventory = await Inventory.findOne({ objectID });
+    if (existInventory) {
+      return next(
+        errorHandler(400, "An object with this object ID already exists")
+      );
+    }
+    const inventory = new Inventory({
+      name,
+      objectID,
+      minimum: Number(minimum),
+    });
+
+    await inventory.save();
+    return res.status(200).json({ success: true, inventory });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//ADMIN GET INVENTORY
+export const AdminGetInventory = async (req, res, next) => {
+  try {
+    const inventory = await Inventory.find({});
+    if (!inventory) {
+      return next(errorHandler(500, "Inventory not found"));
+    }
+    return res.status(200).json({ success: true, inventory });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//ADMIN UPDATE INVENTORY
+export const AdminUpdateInventoryController = async (req, res, next) => {
+  try {
+    const { name, minimum, objectID, id, current } = req.body;
+    if (!id) {
+      return next(errorHandler(400, "Required fields are not provided"));
+    }
+    const inventory = await Inventory.findOneAndUpdate({
+      name,
+      minimum,
+      objectID,
+      id,
+      current,
+    });
+    if (!inventory) {
+      return next(errorHandler(500, "Something broke internally"));
+    }
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+//ADMIN DELETE INVENTORY
+export const AdminDeleteInventoryController = async (req, res, next) => {
+  try {
+    const { id } = req.body;
+    if (!id) {
+      return next(errorHandler(400, "Required Id Not Found"));
+    }
+    await Inventory.delete({ _id: id });
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    return next(error);
   }
 };

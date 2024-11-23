@@ -15,8 +15,8 @@ function PanelContextProvider({ children }) {
     savedSpaceLeft: 12,
     savedUpSpace: 6,
     fanIcon: {
-      id: "FN01",
-      src: "/ICONS/fans/fan1.png",
+      id: "70",
+      src: "/ICONS/fans/70.png",
     },
     dimmerIcon: { id: "AB04", src: "/ICONS/alphabets/alphabet-d.png" },
     extensionTypeOne: "",
@@ -27,7 +27,7 @@ function PanelContextProvider({ children }) {
   const [initialSignIn, setInitialSignIn] = useState(false);
   const [upSpace, setUpSpace] = useState(6);
   const [currentCollectionId, setCurrentCollectionId] = useState("");
-
+  const [twelveModExtError, setTwelveModExtError] = useState(false);
   useEffect(() => {
     if (panelSpecs.panelSize) {
       setSpaceLeft(panelSpecs.panelSize);
@@ -48,6 +48,8 @@ function PanelContextProvider({ children }) {
         setCurrentCollectionId,
         upSpace,
         setUpSpace,
+        twelveModExtError,
+        setTwelveModExtError,
       }}
     >
       {children}

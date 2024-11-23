@@ -6,7 +6,6 @@ import CollectionPanels from "./CollectionPanels";
 import getCompletePdfOfComponent from "../../../data/DownloadPanels/GetCompletePdfOfComponent";
 import { PanelContext } from "../../context/PanelContextProvider";
 import OrderPdf from "../../../data/DownloadPanels/OrderPdf";
-import { Order } from "../../../../api/models/Order";
 
 function CollectionPage() {
   const navigation = useNavigate();
@@ -21,7 +20,9 @@ function CollectionPage() {
   const [panelLoading, setPanelLoading] = useState(false);
   const [raiseOrderPopup, setRaiseOrderPopup] = useState(false);
   const [orderHistory, setOrderHistory] = useState(false);
+  const [orderUploading, setOrderUploading] = useState(false);
   const [orderLoading, setOrderLoading] = useState(false);
+  const { panelSpecs, setPanelSpecs } = useContext(PanelContext);
   const [panelBasicDetail, setPanelBasicDetail] = useState({
     collectionId: id,
     panelName: "",
@@ -38,27 +39,39 @@ function CollectionPage() {
           "There Are No Panels To Raise Order For, Have At Least One Panel"
         );
       }
-      //   const userData = sessionStorage.getItem("userData");
-      //   const formData = new FormData();
-      //   const pdfBlob = await OrderPdf(panelCollectionContext);
-      //   if (!pdfBlob) return alert("Something Went Wrong, cannot generate pdf");
-      //   formData.append("file", pdfBlob, "order.pdf");
 
-      //   const resPDF = await fetch(`/api/v1/user/upload-order/${userData._id}`, {
-      //     method: "POST",
-      //     body: formData,
-      //   });
-      //   const dataPDF = await resPDF.json();
-      //   if (dataPDF.success === false) {
-      //     return alert(dataPDF.message);
-      //   } else {
-      //     alert("Error");
-      //   }
       setOrderLoading(true);
+      const formData = new FormData();
+      const pdfBlob = await OrderPdf(panelCollectionContext);
+      setOrderLoading(false);
+      if (!pdfBlob) {
+        setOrderLoading(false);
+        return alert("Something Went Wrong, cannot generate pdf");
+      }
+      if (pdfBlob.size === 0) {
+        setOrderLoading(false);
+        return alert("Generated PDF is empty");
+      }
+      setOrderUploading(true);
+      formData.append("file", pdfBlob, `order-${id}.pdf`);
+      const userData = JSON.parse(sessionStorage.getItem("userData"));
+      const resPDF = await fetch(`/api/v1/user/upload-order/${userData._id}`, {
+        method: "POST",
+        body: formData,
+      });
+      const dataPDF = await resPDF.json();
+      if (dataPDF.success === false) {
+        setOrderUploading(false);
+        return alert(dataPDF.message);
+      }
       const res = await fetch("/api/v1/user/raise-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ panels, userID: user._id }),
+        body: JSON.stringify({
+          panels,
+          userID: user._id,
+          pdfLink: dataPDF.downloadURL,
+        }),
       });
       const data = await res.json();
       if (data.success === true) {
@@ -69,9 +82,9 @@ function CollectionPage() {
       } else {
         alert(data.message);
       }
-      setOrderLoading(false);
+      setOrderUploading(false);
     } catch (error) {
-      setOrderLoading(false);
+      setOrderUploading(false);
       alert("Error", `Something Went Wrong`);
     }
   }
@@ -89,6 +102,13 @@ function CollectionPage() {
       if (res.ok && data.success === true) {
         setCollection(data.collection);
         setPanels(data.collection.panels);
+        if (data.collection.panels.length > 0) {
+          setPanelSpecs({
+            ...panelSpecs,
+            droppableType:
+              data.collection.panels[0].panelData.droppableType || "1",
+          });
+        }
         setNormalPanels(data.collection.normalPanels);
       } else {
         alert(data.message);
@@ -330,7 +350,11 @@ function CollectionPage() {
                 onClick={handleRaiseOrderCollection}
                 className="p-2 border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white transition-all duration-200 rounded-full"
               >
-                {orderLoading ? "Loading..." : "Confirm"}
+                {orderLoading
+                  ? "Order Generating..."
+                  : orderUploading
+                  ? "Uploading Order..."
+                  : "Confirm"}
               </button>
             </div>
           </div>

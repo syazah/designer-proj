@@ -38,7 +38,6 @@ function ViewBusinesses() {
       );
       const data = await res.json();
       if (data.success === true) {
-        console.log(data);
         setNumDoc(data.numDoc);
         setAllUsers(data.user);
       }

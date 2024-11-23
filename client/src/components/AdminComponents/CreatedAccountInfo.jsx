@@ -20,8 +20,8 @@ function CreatedAccountInfo({ formData }) {
         setLoading(false);
       }
     } catch (error) {
+      alert("Something Went Wrong !!");
       setLoading(false);
-      console.log(error);
     }
   }
   return (

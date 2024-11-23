@@ -15,6 +15,7 @@ function BigPanel({
   fanIcon,
   dimmerIcon,
   panelIcons = [],
+  droppableType,
 }) {
   const { panelSpecs } = useContext(PanelContext);
   // PANEL
@@ -72,6 +73,7 @@ function BigPanel({
                             );
                             return (
                               <DroppableCollection
+                                droppableType={droppableType}
                                 key={`0-${indexs}-${i}`}
                                 id={`0-${indexs}-${i}`}
                                 iconData={iconDataToSend}
@@ -87,6 +89,7 @@ function BigPanel({
                           (_, i) => {
                             return (
                               <DroppableCollection
+                                droppableType={droppableType}
                                 key={`0-${indexs}-${i}`}
                                 id={`0-${indexs}-${i}`}
                               />
@@ -188,6 +191,7 @@ function BigPanel({
                             );
                             return (
                               <DroppableCollection
+                                droppableType={droppableType}
                                 key={`1-${indexs}-${i}`}
                                 id={`1-${indexs}-${i}`}
                                 iconData={iconDataToSend}
@@ -203,6 +207,7 @@ function BigPanel({
                           (_, i) => {
                             return (
                               <DroppableCollection
+                                droppableType={droppableType}
                                 key={`1-${indexs}-${i}`}
                                 id={`1-${indexs}-${i}`}
                               />

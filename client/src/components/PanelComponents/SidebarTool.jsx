@@ -363,12 +363,13 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
       {sidebarToolShows === "icons" && (
         <div className="w-full flex gap-2 justify-center items-start flex-wrap mt-2 px-2">
           {[
-            { id: 0, title: "Alphabets" },
-            { id: 1, title: "Lights" },
-            { id: 2, title: "Lamps" },
-            { id: 3, title: "Fans" },
-            { id: 4, title: "Switches" },
-            { id: 5, title: "Scenes" },
+            { id: 0, title: "Accessories" },
+            { id: 1, title: "Alphabets" },
+            { id: 2, title: "Lights" },
+            { id: 3, title: "Lamps" },
+            { id: 4, title: "Fans" },
+            { id: 5, title: "Appliances" },
+            { id: 6, title: "COB" },
           ].map((item, index) => (
             <div
               key={index}
@@ -420,12 +421,20 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
           {selectedIcons >= 0 &&
             PanelIcons[selectedIcons].map((icon) => {
               return (
-                <Draggable
+                <div
                   key={icon.id}
-                  mainId={selectedIcons}
-                  id={icon.id}
-                  src={icon.src}
-                />
+                  className="flex flex-col justify-start items-center"
+                >
+                  <div className="w-full p-1 bg-red-600 text-xs rounded-sm flex justify-center items-center">
+                    {icon.id}
+                  </div>
+                  <Draggable
+                    key={icon.id}
+                    mainId={selectedIcons}
+                    id={icon.id}
+                    src={icon.src}
+                  />
+                </div>
               );
             })}
         </div>
