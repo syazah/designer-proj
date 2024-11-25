@@ -9,6 +9,10 @@ import generalRouter from "./routes/general.routes.js";
 import salesRouter from "./routes/sales.routes.js";
 import manufacturerRouter from "./routes/manufacturing.routes.js";
 import workerRouter from "./routes/worker.routes.js";
+import path from "path";
+
+const __dirname = path.resolve();
+
 dotenv.config();
 const app = express();
 
