@@ -30,7 +30,7 @@ export const SalesSignInController = async (req, res, next) => {
       return next(errorHandler(400, "Password is not correct"));
     }
     const token = jwt.sign({ id: sale._id }, process.env.JWT_SECRET);
-    res.status(200).json({ success: true, token, type: 1 });
+    res.status(200).json({ success: true, token, type: 2 });
   } catch (error) {
     return next(error);
   }

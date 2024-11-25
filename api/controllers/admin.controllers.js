@@ -104,7 +104,7 @@ export const AdminSignInController = async (req, res, next) => {
       return next(errorHandler(400, "Password is not correct"));
     }
     const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET);
-    res.status(200).json({ success: true, token, type: 0 });
+    res.status(200).json({ success: true, token, type: 1 });
   } catch (error) {
     return next(error);
   }
