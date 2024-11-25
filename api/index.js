@@ -31,6 +31,15 @@ app.use("/api/v1/business/", businessRouter);
 app.use("/api/v1/sales/", salesRouter);
 app.use("/api/v1/manufacturer/", manufacturerRouter);
 app.use("/api/v1/worker/", workerRouter);
+
+
+// Static Files
+app.use(express.static(path.join(__dirname, "/client/dist")));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
+});
+
+
 // ERROR HANDLING
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
