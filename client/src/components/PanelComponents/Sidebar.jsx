@@ -34,7 +34,11 @@ function Sidebar({ panelType, setSidebarOpen, setSidebarToolShows }) {
                 if (selectedId <= 0 && specs.id > 2) {
                   return;
                 }
-                if (specs.id >= 2 && panelSpecs.panelSize === 12) {
+                if (
+                  specs.id >= 2 &&
+                  panelSpecs.panelSize === 12 &&
+                  panelType != "normal"
+                ) {
                   const countExt = panelSpecs.bigPanelVariant[1].reduce(
                     (acc, val) => (val === "ext" ? acc + 1 : acc),
                     0

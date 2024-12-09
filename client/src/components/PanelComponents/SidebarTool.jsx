@@ -370,6 +370,7 @@ function SidebarTool({ sidebarToolShows, setCantAddMore }) {
             { id: 4, title: "Fans" },
             { id: 5, title: "Appliances" },
             { id: 6, title: "COB" },
+            { id: 7, title: "Scenes" },
           ].map((item, index) => (
             <div
               key={index}

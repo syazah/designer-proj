@@ -14,6 +14,10 @@ const VerifySchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    otpFor: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true }
 );

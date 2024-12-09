@@ -24,6 +24,7 @@ function PanelContextProvider({ children }) {
   });
   const [spaceLeft, setSpaceLeft] = useState(panelSpecs.panelSize);
   const [panelCollectionContext, setPanelCollectionContext] = useState(null);
+
   const [initialSignIn, setInitialSignIn] = useState(false);
   const [upSpace, setUpSpace] = useState(6);
   const [currentCollectionId, setCurrentCollectionId] = useState("");
