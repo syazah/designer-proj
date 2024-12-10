@@ -233,6 +233,7 @@ export const CreateCollectionController = async (req, res, next) => {
     if (!_id || !name) {
       return next(errorHandler(400, "All Fields Are Required"));
     }
+
     const newCollection = new Collection({
       name,
       description,

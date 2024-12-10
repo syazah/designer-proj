@@ -175,7 +175,7 @@ function CollectionSection({ setAddCollection, completeUser, loading }) {
     }
   }
   return (
-    <div className="w-full p-6 flex flex-col">
+    <div className="w-full p-4 flex flex-col">
       {/* COLLECTION HEADER  */}
       <div className="flex justify-between">
         <h1 className="text-white text-lg md:text-2xl border-b-[2px] border-red-600">
@@ -202,12 +202,12 @@ function CollectionSection({ setAddCollection, completeUser, loading }) {
           <img className="w-[10%]" src="/loader.gif" />
         </div>
       ) : (
-        <div className="w-full flex flex-col md:flex-row gap-6 p-2 mt-4 justify-start items-start">
+        <div className="w-full flex flex-col md:flex-row flex-wrap gap-6 mt-4 justify-start items-start">
           {completeUser?.collectionsCreated.map((collection, index) => {
             return (
               <div
                 key={index}
-                className="w-full md:w-1/3 h-[280px] bg-zinc-900 border-red-600 border-2 shadow-xl rounded-2xl p-4 flex flex-col gap-4 "
+                className="w-full md:w-[32%] h-[280px] bg-zinc-900 border-red-600 border-2 shadow-xl rounded-2xl py-4 px-2 flex flex-col gap-4 "
               >
                 <h2 className="text-xl text-white border-b-[2px] border-red-600">
                   {collection.name}
@@ -271,6 +271,7 @@ function AddCollectionPopup({ completeUser, setAddCollection }) {
   const [collectionForm, setCollectionForm] = useState({
     _id: completeUser._id,
     description: "",
+    isBusiness: completeUser.isBusiness || false,
   });
 
   // HANDLE FORM DATA
@@ -289,6 +290,7 @@ function AddCollectionPopup({ completeUser, setAddCollection }) {
       });
       const data = await res.json();
       if (res.ok && data.success === true) {
+        console.log("OK");
         setLoading(false);
         setAddCollection(false);
         setTimeout(() => {
@@ -297,6 +299,7 @@ function AddCollectionPopup({ completeUser, setAddCollection }) {
       }
       setLoading(false);
     } catch (error) {
+      console.log(error);
       setLoading(false);
       alert(JSON.stringify(error));
     }

@@ -8,11 +8,11 @@ import { PanelContext } from "../../context/PanelContextProvider";
 import BigPanel from "../PanelComponents/BigPanel";
 function CollectionPanels({ panels, setAddPanelPopup, normalPanels }) {
   const collectionRef = useRef(null);
-
+  const panelRef = useRef(null);
   const { setPanelCollectionContext } = useContext(PanelContext);
   useEffect(() => {
     setPanelCollectionContext(collectionRef);
-  }, [collectionRef, setPanelCollectionContext]);
+  }, [collectionRef, setPanelCollectionContext, panelRef]);
 
   return (
     <div className="w-full min-h-[200px] flex flex-col justify-start overflow-hidden">
@@ -84,7 +84,13 @@ function CollectionPanels({ panels, setAddPanelPopup, normalPanels }) {
               className="w-full mt-8 flex flex-col gap-4"
             >
               {panels?.map((panel, index) => {
-                return <AvailablePanel key={index} panel={panel} />;
+                return (
+                  <AvailablePanel
+                    panelRef={panelRef}
+                    key={index}
+                    panel={panel}
+                  />
+                );
               })}
             </div>
           )}
@@ -92,10 +98,7 @@ function CollectionPanels({ panels, setAddPanelPopup, normalPanels }) {
             NORMAL PANELS
           </h1>
           {normalPanels.length > 0 && (
-            <div
-              ref={collectionRef}
-              className="w-full mt-8 flex flex-col gap-4"
-            >
+            <div className="w-full mt-8 flex flex-col gap-4">
               {normalPanels?.map((panel, index) => {
                 return <NormalPanel key={`${index}-normal`} panel={panel} />;
               })}
@@ -146,7 +149,7 @@ function AvailablePanel({ panel }) {
     }
   }
   return (
-    <div className="bg-zinc-950 rounded-xl flex flex-col overflow-hidden relative">
+    <div className="available-panel bg-zinc-950 rounded-xl flex flex-col overflow-hidden relative">
       <div
         ref={panelRef}
         style={{ backgroundColor: panel?.panelData?.panelWall ?? "#000" }}
@@ -157,6 +160,8 @@ function AvailablePanel({ panel }) {
         {panel?.panelData != null && panel?.panelData.panelSize < 12 ? (
           <Panel
             spaceLeft={panel?.panelData.savedSpaceLeft}
+            extensionOne={panel?.panelData.extensionTypeOne}
+            extensionTwo={panel?.panelData.extensionTypeTwo}
             panelSize={panel?.panelData.panelSize}
             panelGlass={panel?.panelData.panelGlass}
             panelFrame={panel?.panelData.panelFrame}
@@ -171,6 +176,8 @@ function AvailablePanel({ panel }) {
             upSpace={panel?.panelData.savedUpSpace}
             spaceLeft={panel?.panelData.savedSpaceLeft}
             panelGlass={panel?.panelData.panelGlass}
+            extensionOne={panel?.panelData.extensionTypeOne}
+            extensionTwo={panel?.panelData.extensionTypeTwo}
             panelFrame={panel?.panelData.panelFrame}
             panelVariant={panel?.panelData.bigPanelVariant}
             fanIcon={panel?.panelData.fanIcon}
@@ -258,7 +265,9 @@ function AvailablePanel({ panel }) {
         {/* PDF  */}
         <div
           onClick={() => {
-            getPdfOfComponent(panelRef, panel.panelName);
+            if (panelRef.current) {
+              getPdfOfComponent(panelRef, panel.panelName);
+            }
           }}
           className="flex justify-start items-center gap-1 cursor-pointer group"
         >
