@@ -14,6 +14,7 @@ function CollectionPage() {
   const [panels, setPanels] = useState([]);
   const [normalPanels, setNormalPanels] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [downloadingPanelPdf, setDownloadingPanelPdf] = useState(false);
   const { id } = useParams();
   const [addPanelPopup, setAddPanelPopup] = useState(false);
   const [currentToolSelected, setCurrentToolSelected] = useState(0);
@@ -201,8 +202,17 @@ function CollectionPage() {
                   Panels
                 </h2>
                 <div
-                  onClick={() => {
-                    getCompletePdfOfComponent(panelCollectionContext);
+                  onClick={async () => {
+                    setDownloadingPanelPdf(true);
+                    await new Promise((resolve) => {
+                      setTimeout(async () => {
+                        await getCompletePdfOfComponent(panelCollectionContext);
+                        resolve();
+                        setTimeout(() => {
+                          setDownloadingPanelPdf(false);
+                        }, 5000);
+                      }, 500);
+                    });
                   }}
                   className="flex justify-center items-center bg-red-600 border-l-2 border-red-800 cursor-pointer p-2 group transition-all duration-500"
                 >
@@ -308,6 +318,7 @@ function CollectionPage() {
             {/* TOOLBAR VAL  */}
             {currentToolSelected === 0 ? (
               <CollectionPanels
+                downloadingPanelPdf={downloadingPanelPdf}
                 setAddPanelPopup={setAddPanelPopup}
                 panels={panels}
                 normalPanels={normalPanels}
@@ -464,6 +475,7 @@ function CollectionPage() {
           userID={user._id}
         />
       )}
+      {downloadingPanelPdf && <DownloadingPanelPdf />}
     </div>
   );
 }
@@ -540,6 +552,15 @@ function OrderHistoryPopup({ setOrderHistory, userID }) {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function DownloadingPanelPdf() {
+  return (
+    <div className="w-full fixed top-0 left-0 h-[100vh] bg-zinc-900 z-50 flex flex-col justify-center items-center">
+      <img className="w-[200px]" src="/loader.gif" />
+      <h1 className="text-white font-semibold text-xl">DOWNLOADING</h1>
     </div>
   );
 }
