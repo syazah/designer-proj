@@ -6,6 +6,7 @@ import React, { useContext } from "react";
 import DimmerVariant from "../VariantComponent/DimmerVariant";
 import { PanelContext } from "../../context/PanelContextProvider";
 function BigPanel({
+  downloadingPanelPdf,
   upSpace,
   spaceLeft,
   setSpaceLeft,
@@ -40,7 +41,11 @@ function BigPanel({
                 return (
                   <div
                     key={i}
-                    className="w-[150px] h-[150px] border-2 border-red-800"
+                    className={`w-[150px] ${
+                      downloadingPanelPdf
+                        ? "border-none"
+                        : "border-2 border-red-800"
+                    } h-[150px]`}
                   ></div>
                 );
               })}
@@ -52,7 +57,11 @@ function BigPanel({
                 return (
                   <div
                     key={i}
-                    className="w-[150px] h-[150px] border-2 border-red-800"
+                    className={`w-[150px] ${
+                      downloadingPanelPdf
+                        ? "border-none"
+                        : "border-2 border-red-800"
+                    } h-[150px]`}
                   ></div>
                 );
               })}
@@ -142,7 +151,11 @@ function BigPanel({
                   return (
                     <div
                       key={`0-box-${i}`}
-                      className="w-[150px] h-[150px] border-2 border-red-800"
+                      className={`w-[150px] ${
+                        downloadingPanelPdf
+                          ? "border-none"
+                          : "border-2 border-red-800"
+                      } h-[150px]`}
                     ></div>
                   );
                 })}
@@ -302,7 +315,11 @@ function BigPanel({
                   return (
                     <div
                       key={`1-box-${i}`}
-                      className="w-[150px] h-[150px] border-2 border-red-800"
+                      className={`w-[150px] ${
+                        downloadingPanelPdf
+                          ? "border-none"
+                          : "border-2 border-red-800"
+                      } h-[150px]`}
                     ></div>
                   );
                 })}

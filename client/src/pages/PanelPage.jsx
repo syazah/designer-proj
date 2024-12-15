@@ -109,6 +109,9 @@ function PanelPage() {
       const data = await res.json();
       if (res.ok && data.success === true) {
         setPanelData(data.panel);
+        setSpaceLeft(data.panel.panelData.savedSpaceLeft);
+        setUpSpace(data.panel.panelData.savedUpSpace);
+        setPanelSpecs(data.panel.panelData);
       } else {
         alert("Error", data.message);
       }

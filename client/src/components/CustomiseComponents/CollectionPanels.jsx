@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Panel from "../PanelComponents/Panel";
 import { useContext, useEffect, useRef, useState } from "react";
 import { UserAuthContext } from "../../context/UserAuthProvider";
@@ -6,13 +6,44 @@ import getImageOfComponent from "../../../data/DownloadPanels/GetImageOfComponen
 import getPdfOfComponent from "../../../data/DownloadPanels/GetPdfOfComponent";
 import { PanelContext } from "../../context/PanelContextProvider";
 import BigPanel from "../PanelComponents/BigPanel";
-function CollectionPanels({ panels, setAddPanelPopup, normalPanels }) {
+function CollectionPanels({
+  panels,
+  setAddPanelPopup,
+  normalPanels,
+  downloadingPanelPdf,
+}) {
   const collectionRef = useRef(null);
   const panelRef = useRef(null);
-  const { setPanelCollectionContext } = useContext(PanelContext);
+  const {
+    setPanelCollectionContext,
+    setPanelSpecs,
+    panelSpecs,
+    setSpaceLeft,
+    setUpSpace,
+  } = useContext(PanelContext);
   useEffect(() => {
     setPanelCollectionContext(collectionRef);
-  }, [collectionRef, setPanelCollectionContext, panelRef]);
+    setPanelSpecs({
+      ...panelSpecs,
+      panelVariant: [],
+      bigPanelVariant: [[], []],
+      panelIcons: {},
+      savedUpSpace: 6,
+      savedSpaceLeft: 12,
+      extensionTypeOne: "",
+      extensionTypeTwo: "",
+    });
+    setSpaceLeft(panelSpecs.panelSize);
+    setUpSpace(6);
+  }, [
+    collectionRef,
+    setPanelCollectionContext,
+    panelRef,
+    panelSpecs,
+    setPanelSpecs,
+    setUpSpace,
+    setSpaceLeft,
+  ]);
 
   return (
     <div className="w-full min-h-[200px] flex flex-col justify-start overflow-hidden">
@@ -86,6 +117,7 @@ function CollectionPanels({ panels, setAddPanelPopup, normalPanels }) {
               {panels?.map((panel, index) => {
                 return (
                   <AvailablePanel
+                    downloadingPanelPdf={downloadingPanelPdf}
                     panelRef={panelRef}
                     key={index}
                     panel={panel}
@@ -110,12 +142,14 @@ function CollectionPanels({ panels, setAddPanelPopup, normalPanels }) {
   );
 }
 
-function AvailablePanel({ panel }) {
+function AvailablePanel({ panel, downloadingPanelPdf }) {
   const { user } = useContext(UserAuthContext);
+  const { setPanelSpecs } = useContext(PanelContext);
   const panelRef = useRef(null);
   const downloadOptionRef = useRef(null);
   const [downloadOptionShowing, setDownloadOptionShowing] = useState(false);
   const { id: collectionID } = useParams();
+  const navigate = useNavigate();
   function getDownloadOption() {
     if (!downloadOptionShowing) {
       downloadOptionRef.current.style.transform = "translateY(0px)";
@@ -149,7 +183,7 @@ function AvailablePanel({ panel }) {
     }
   }
   return (
-    <div className="available-panel bg-zinc-950 rounded-xl flex flex-col overflow-hidden relative">
+    <div className="bg-zinc-950 rounded-xl flex flex-col overflow-hidden relative">
       <div
         ref={panelRef}
         style={{ backgroundColor: panel?.panelData?.panelWall ?? "#000" }}
@@ -159,6 +193,7 @@ function AvailablePanel({ panel }) {
       >
         {panel?.panelData != null && panel?.panelData.panelSize < 12 ? (
           <Panel
+            downloadingPanelPdf={downloadingPanelPdf}
             spaceLeft={panel?.panelData.savedSpaceLeft}
             extensionOne={panel?.panelData.extensionTypeOne}
             extensionTwo={panel?.panelData.extensionTypeTwo}
@@ -173,6 +208,7 @@ function AvailablePanel({ panel }) {
           />
         ) : (
           <BigPanel
+            downloadingPanelPdf={downloadingPanelPdf}
             upSpace={panel?.panelData.savedUpSpace}
             spaceLeft={panel?.panelData.savedSpaceLeft}
             panelGlass={panel?.panelData.panelGlass}
@@ -235,9 +271,12 @@ function AvailablePanel({ panel }) {
           </div>
 
           {/* GO TO PANEL  */}
-          <Link
-            to={`/panel/${panel._id}`}
-            className="flex justify-center items-center p-2 bg-red-600 rounded-full hover:bg-red-800"
+          <div
+            onClick={() => {
+              setPanelSpecs(panel.panelData);
+              navigate(`/panel/${panel._id}`);
+            }}
+            className="flex justify-center items-center p-2 bg-red-600 rounded-full hover:bg-red-800 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -253,7 +292,7 @@ function AvailablePanel({ panel }) {
                 d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
               />
             </svg>
-          </Link>
+          </div>
         </div>
       </div>
 

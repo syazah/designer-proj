@@ -6,6 +6,7 @@ import PlugVariant from "../VariantComponent/PlugVariant";
 import DimmerVariant from "../VariantComponent/DimmerVariant";
 import { PanelContext } from "../../context/PanelContextProvider";
 function Panel({
+  downloadingPanelPdf,
   spaceLeft,
   setSpaceLeft,
   normalPanel = false,
@@ -56,7 +57,9 @@ function Panel({
             return (
               <div
                 key={i}
-                className="w-[200px] h-[200px] border-2 border-red-800"
+                className={`w-[200px] ${
+                  downloadingPanelPdf ? "" : "border-2 border-red-800"
+                } h-[200px]`}
               ></div>
             );
           })}
@@ -216,7 +219,9 @@ function Panel({
                 return (
                   <div
                     key={`box-${i}`}
-                    className="w-[200px] h-[200px] border-2 border-red-800"
+                    className={`w-[200px] ${
+                      downloadingPanelPdf ? "" : "border-2 border-red-800"
+                    } h-[200px]`}
                   ></div>
                 );
               })}
