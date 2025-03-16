@@ -636,23 +636,61 @@ export const AdminGetInventory = async (req, res, next) => {
 };
 
 //ADMIN UPDATE INVENTORY
+async function updateInventory(data) {
+  const { id, name, minimum, objectID, current } = data;
+  if (!id) return null;
+
+  const updateFields = {};
+  if (name !== undefined) updateFields.name = name;
+  if (minimum !== undefined) updateFields.minimum = minimum;
+  if (objectID !== undefined) updateFields.objectID = objectID;
+  if (current !== undefined) updateFields.current = current;
+
+  const inventory = await Inventory.findOneAndUpdate(
+    { _id: id },
+    { $set: updateFields },
+    { new: true }
+  );
+  return inventory;
+}
 export const AdminUpdateInventoryController = async (req, res, next) => {
   try {
-    const { name, minimum, objectID, id, current } = req.body;
-    if (!id) {
-      return next(errorHandler(400, "Required fields are not provided"));
+    const { multipleUpdates } = req.query;
+    const data = req.body;
+
+    if (multipleUpdates) {
+      if (!Array.isArray(data)) {
+        return next(
+          errorHandler(400, "Data must be an array for multiple updates")
+        );
+      }
+
+      const updatePromises = data.map((item) => updateInventory(item));
+      const results = await Promise.all(updatePromises);
+
+      if (results.some((result) => !result)) {
+        return next(errorHandler(400, "Some updates failed"));
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "All inventory items updated successfully",
+      });
+    } else {
+      if (!data.id) {
+        return next(errorHandler(400, "Required ID not provided"));
+      }
+
+      const updatedInventory = await updateInventory(data);
+      if (!updatedInventory) {
+        return next(errorHandler(404, "Inventory item not found"));
+      }
+
+      return res.status(200).json({
+        success: true,
+        inventory: updatedInventory,
+      });
     }
-    const inventory = await Inventory.findOneAndUpdate({
-      name,
-      minimum,
-      objectID,
-      id,
-      current,
-    });
-    if (!inventory) {
-      return next(errorHandler(500, "Something broke internally"));
-    }
-    return res.status(200).json({ success: true });
   } catch (error) {
     return next(error);
   }
@@ -669,5 +707,16 @@ export const AdminDeleteInventoryController = async (req, res, next) => {
     return res.status(200).json({ success: true });
   } catch (error) {
     return next(error);
+  }
+};
+
+//UPDATE ORDER
+export const AdminUpdateBOMUpdate = async (req, res, next) => {
+  try {
+    const { orderId } = req.body;
+    await Order.findOneAndUpdate({ _id: orderId }, { inventoryAssigned: true });
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    console.log(error);
   }
 };
