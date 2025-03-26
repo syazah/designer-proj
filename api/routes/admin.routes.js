@@ -31,6 +31,7 @@ import {
   AdminGetInventory,
   AdminUpdateInventoryController,
   AdminDeleteInventoryController,
+  AdminUpdateBOMUpdate,
 } from "../controllers/admin.controllers.js";
 
 const routes = express.Router();
@@ -46,6 +47,7 @@ routes.post("/add-inventory", AdminAddInventoryDetail);
 routes.get("/get-inventory", AdminGetInventory);
 routes.put("/update-inventory", AdminUpdateInventoryController);
 routes.delete("/delete-inventory", AdminDeleteInventoryController);
+routes.put("/update-order-inventory", AdminUpdateBOMUpdate);
 //Sales
 routes.post("/add-sales-person", AdminAddSalesPersonController);
 routes.post("/delete-salesman", AdminDeleteSalesManController);

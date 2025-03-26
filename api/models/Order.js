@@ -41,6 +41,11 @@ const OrderSchema = new Mongoose.Schema(
     orderCompletedImage: {
       type: String,
     },
+    inventoryAssigned: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   { timestamps: true }
 );
