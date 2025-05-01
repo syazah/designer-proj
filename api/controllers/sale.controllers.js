@@ -99,6 +99,7 @@ export const SalesManSendToAdmin = async (req, res, next) => {
         errorHandler(400, "Could not find an id linked to the order")
       );
     }
+
     await Order.findOneAndUpdate(
       { _id: id },
       {
@@ -187,6 +188,39 @@ export const SalesGetPanelsController = async (req, res, next) => {
       return next(errorHandler(400, "Panels Not found for this id"));
     }
     return res.status(200).json({ success: true, data: customer });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const SalesCreateOrderController = async (req, res, next) => {
+  try {
+    const { panelData, token } = req.body;
+    if (!panelData) {
+      return next(errorHandler(400, "Required Fields Not Provided"));
+    }
+    if (!token) {
+      return next(errorHandler(400, "Admin Token Not Found"));
+    }
+    const { id } = await jwt.verify(token, process.env.JWT_SECRET);
+    if (!id) {
+      return next(
+        errorHandler(
+          400,
+          "Something went wrong while getting correct id of admin"
+        )
+      );
+    }
+    const newOrder = new Order({
+      panelData,
+      raisedBy: id,
+      referenceNumber: "ALI-" + Math.random().toString(36).substring(2, 15),
+      currentStage: "Admin",
+      detailedStage: "sales-to-admin",
+      pdfLink: null,
+    });
+    await newOrder.save();
+    return res.status(200).json({ success: true, newOrder });
   } catch (error) {
     return next(error);
   }

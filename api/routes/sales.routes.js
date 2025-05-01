@@ -8,11 +8,13 @@ import {
   SalesAddCustomerController,
   SalesGetCustomerController,
   SalesGetPanelsController,
+  SalesCreateOrderController,
 } from "../controllers/sale.controllers.js";
 route.post("/signin", SalesSignInController);
 route.post("/salesman-details", SalesManGetDetailsController);
 route.post("/quotation-cost", SalesManEditQuotationCostController);
 route.post("/send-admin", SalesManSendToAdmin);
+route.post("/create-order", SalesCreateOrderController);
 route.post("/add-customer", SalesAddCustomerController);
 route.post("/get-customer", SalesGetCustomerController);
 route.post("/get-panels", SalesGetPanelsController);
